@@ -1,11 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     private Vector2 touchPos;
+    private Vector2 originalTouchPos;
 
     private bool updateTouch = false;
+
+    private bool validBlockSelected = false;
 
     [SerializeField]
     private TowerController TowerController;
@@ -25,29 +29,63 @@ public class PlayerController : MonoBehaviour
     {
         if (updateTouch)
         {
-            Debug.Log(touchPos.x / screenWidth);
-            Debug.Log(touchPos.y / screenHeight);
             updateTouch = false;
-            var point3 = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 10));
-            TowerController.selectPoint(point3);
-            Debug.Log(point3);
+            if ((touchPos - originalTouchPos).magnitude > 50)
+            {
+                if (Math.Abs(touchPos.x - originalTouchPos.x) > Math.Abs(touchPos.y - originalTouchPos.y))
+                {
+                    TowerController.Rotate(0);
+                }
+                else
+                {
+                    if (touchPos.y > originalTouchPos.y)
+                    {
+                        TowerController.reverseDown = true;
+                    }
+                    else
+                    {
+                        TowerController.reverseDown = false;
+                    }
+
+                    TowerController.Reverse(0);
+                }
+            }
+            touchPos = Vector2.zero;
+            originalTouchPos = Vector2.zero;
         }
     }
 
     public void ChangeAim(InputAction.CallbackContext context)
     {
-        touchPos = context.ReadValue<Vector2>();
-    }
-    public void Stop(InputAction.CallbackContext context)
-    {
-        var value = context.ReadValue<UnityEngine.InputSystem.TouchPhase>();
-        if (value.ToString() == "Ended")
+        if (touchPos == Vector2.zero)
         {
-            updateTouch = true;
+            originalTouchPos = context.ReadValue<Vector2>();
+            var point3 = Camera.main.ScreenToWorldPoint(new Vector3(originalTouchPos.x, originalTouchPos.y, 10));
+            validBlockSelected = TowerController.SelectPoint(point3);
+        }
+
+        if (validBlockSelected)
+        {
+            touchPos = context.ReadValue<Vector2>();
         }
         else
         {
-            updateTouch = false;
+            touchPos = Vector2.zero;
+        }
+    }
+    public void Stop(InputAction.CallbackContext context)
+    {
+        if (validBlockSelected)
+        {
+            var value = context.ReadValue<UnityEngine.InputSystem.TouchPhase>();
+            if (value.ToString() == "Ended")
+            {
+                updateTouch = true;
+            }
+            else
+            {
+                updateTouch = false;
+            }
         }
     }
 }
