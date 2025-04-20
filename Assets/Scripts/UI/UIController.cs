@@ -7,9 +7,8 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    private Canvas[] UIs = new Canvas[5];
+    private Canvas[] UIs = new Canvas[8];
     private TMP_Text TimeText;
-
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +20,9 @@ public class UIController : MonoBehaviour
         UIs[2] = GameObject.Find("PlayMenu").GetComponent<Canvas>();
         UIs[3] = GameObject.Find("InGameUI").GetComponent<Canvas>();
         UIs[4] = GameObject.Find("ShopMenu").GetComponent<Canvas>();
+        UIs[5] = GameObject.Find("InGameMenu").GetComponent<Canvas>();
+        UIs[6] = GameObject.Find("CampaignMenu").GetComponent<Canvas>();
+        UIs[7] = GameObject.Find("ChallengeMenu").GetComponent<Canvas>();
         ChangeMenu(0);
     }
 
@@ -41,10 +43,24 @@ public class UIController : MonoBehaviour
             {
                 UIs[i].enabled = false;
             }
-
-
         }
 
+    }
+
+    //SETTINGS
+    public void ChangeLanguage(int id)
+    {
+        //Empty
+    }
+
+    public void ChangeMusicVolume(float volume)
+    {
+        //Empty
+    }
+
+    public void ChangeSoundsVolume(float volume)
+    {
+        //Empty
     }
 
     //Wyœwietl czas
@@ -57,7 +73,5 @@ public class UIController : MonoBehaviour
     void FixedUpdate()
     {
         UpdateTime(1.58f);
-
-
     }
 }
