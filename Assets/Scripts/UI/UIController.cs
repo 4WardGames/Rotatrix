@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
@@ -33,7 +30,16 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        for(int i = 0; i < UIs.Length; i++)
+        if (id == 3)
+        {
+            Time.timeScale = 1.0f;
+        }
+        else
+        {
+            Time.timeScale = 0.0f;
+        }
+
+        for (int i = 0; i < UIs.Length; i++)
         {
             if (id == i)
             {
@@ -66,12 +72,15 @@ public class UIController : MonoBehaviour
     //Wyœwietl czas
     public void UpdateTime(float time)
     {
-        TimeText.text = time.ToString();
+        if (TimeText != null)
+        {
+            TimeText.text = time.ToString("0.00");
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        UpdateTime(1.58f);
+
     }
 }

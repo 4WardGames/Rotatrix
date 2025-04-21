@@ -1,17 +1,18 @@
 using System.Collections.Generic;
-
 using UnityEngine;
 
 public class TowerController : MonoBehaviour
 {
-    [SerializeField]
+    private UIController _controller;
+
     private GameObject blockTemplate;
+    [SerializeField]
+    private GameObject originalTemplate;
 
     [SerializeField]
     private int size = 5;
 
-    private List<TowerBlock> originalBlocks = new List<TowerBlock>();
-    private List<TowerBlock> changedBlocks = new List<TowerBlock>();
+    private int defaultSize = 5;
 
     public List<GameObject> originalTower = new List<GameObject>();
     public List<GameObject> changedTower = new List<GameObject>();
@@ -30,6 +31,23 @@ public class TowerController : MonoBehaviour
     private float heightMultiplier = 2.0f;
 
     private float center = 0.0f;
+
+    private float gameTime = 0.0f;
+
+    private int _totalMoves = 0;
+    private int totalMoves
+    {
+        get
+        {
+            return _totalMoves;
+        }
+
+        set
+        {
+            _totalMoves = value;
+            //_controller.  (_totalMoves);
+        }
+    }
 
 
     private float Width
@@ -51,10 +69,12 @@ public class TowerController : MonoBehaviour
 
     void Start()
     {
+        _controller = GameObject.Find("UI").GetComponent<UIController>();
         SaveController.LoadLevel();
-        LoadTower();
+
+
+        //LoadTower();
         //GenerateTower();
-        Debug.Log(Height);
     }
 
     // Update is called once per frame
@@ -68,6 +88,10 @@ public class TowerController : MonoBehaviour
                 //Reverse(1);
             }
         }
+
+        gameTime += Time.deltaTime;
+        _controller.UpdateTime(gameTime);
+
         //for (int i = 0; i < changedBlocks.Count; i++)
         //{
         //    if (changedBlocks[i].targetWorldPosition != changedTower[i].transform.position)
@@ -93,6 +117,25 @@ public class TowerController : MonoBehaviour
         }
 
         Debug.Log("Jest dobrze!");
+
+        foreach (var block in originalTower)
+        {
+            Destroy(block.gameObject);
+        }
+
+        foreach (var block in changedTower)
+        {
+            Destroy(block.gameObject);
+        }
+
+        animations.Clear();
+        originalTower.Clear();
+        changedTower.Clear();
+
+        _totalMoves = 0;
+        gameTime = 0;
+
+        _controller.ChangeMenu(0);
     }
     public void RotateStatic(int splitPoint)
     {
@@ -100,8 +143,8 @@ public class TowerController : MonoBehaviour
         {
             (changedTower[splitPoint - i], changedTower[i]) = (changedTower[i], changedTower[splitPoint - i]);
 
-            changedTower[i].transform.position = new Vector3(widthMultiplier * Width, i * Height, 0);
-            changedTower[splitPoint - i].transform.position = new Vector3(widthMultiplier * Width, (splitPoint - i) * Height, 0);
+            changedTower[i].transform.position = new Vector3(widthMultiplier * Width * 0, i * Height, 0);
+            changedTower[splitPoint - i].transform.position = new Vector3(widthMultiplier * Width * 0, (splitPoint - i) * Height, 0);
         }
     }
     public void ReverseStatic(int splitPoint)
@@ -113,14 +156,16 @@ public class TowerController : MonoBehaviour
 
         for (int i = 0; i < changedTower.Count; i++)
         {
-            changedTower[i].transform.position = new Vector3(widthMultiplier * Width, i * Height, 0);
+            changedTower[i].transform.position = new Vector3(widthMultiplier * Width * 0, i * Height, 0);
         }
     }
     public void Rotate(int splitPoint)
     {
+        totalMoves++;
+
         if (splitPoint == 0)
         {
-            if (selectedBlock != -1)
+            if (selectedBlock != -1 && selectedBlock != changedTower.Count)
             {
                 splitPoint = selectedBlock;
             }
@@ -129,7 +174,7 @@ public class TowerController : MonoBehaviour
                 return;
             }
         }
-        Vector3 rotationPoint = new Vector3(widthMultiplier * Width, (float)splitPoint / 2 * Height + center, 0);
+        Vector3 rotationPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint / 2 * Height + center, 0);
         BlockRotation newAnimation = new BlockRotation(rotationPoint);
 
         for (int i = 0; i <= splitPoint / 2; i++)
@@ -148,6 +193,8 @@ public class TowerController : MonoBehaviour
 
     public void Reverse(int splitPoint)
     {
+        totalMoves++;
+
         if (splitPoint == 0)
         {
             if (selectedBlock != -1)
@@ -157,13 +204,17 @@ public class TowerController : MonoBehaviour
                 {
                     splitPoint -= 1;
                 }
+                else if (selectedBlock == changedTower.Count - 1)
+                {
+                    return;
+                }
             }
             else
             {
                 return;
             }
         }
-        Vector3 reversalPoint = new Vector3(widthMultiplier * Width, (float)splitPoint * Height + center, 0);
+        Vector3 reversalPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint * Height + center, 0);
         BlockReversal newAnimation = new BlockReversal(reversalPoint, splitPoint, changedTower.Count, widthMultiplier, Height);
 
         for (int i = 0; i <= splitPoint; i++)
@@ -186,16 +237,14 @@ public class TowerController : MonoBehaviour
 
     public bool SelectPoint(Vector3 point)
     {
-        if (point.x > widthMultiplier - Width && point.x < widthMultiplier + Width)
+        // new Vector3(widthMultiplier * Width * 0, i * Height, 0);
+        if (point.x > widthMultiplier * 0 - Width && point.x < widthMultiplier * 0 + Width)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i <= size; i++)
             {
-                Debug.Log((0.5 + (i - 1)) * Height + i);
                 if (point.y > (0.5 + (i - 1)) * Height && point.y < (0.5 + i) * Height)
                 {
                     selectedBlock = i;
-
-                    Debug.Log(selectedBlock);
                     return true;
                 }
             }
@@ -206,6 +255,20 @@ public class TowerController : MonoBehaviour
 
     public void GenerateTower()
     {
+        totalMoves = 0;
+        gameTime = 0;
+
+        blockTemplate = GameObject.Instantiate(originalTemplate);
+
+        blockTemplate.transform.position = new Vector3(0, 0, -100);
+
+        float modifier = (float)defaultSize / 7.0f;
+
+        blockTemplate.transform.localScale = new Vector3(blockTemplate.transform.localScale.x,
+            blockTemplate.transform.localScale.y * modifier, blockTemplate.transform.localScale.z);
+
+        size = 7;
+
         for (int i = 0; i < size; i++)
         {
             originalTower.Add(Instantiate(blockTemplate));
@@ -215,7 +278,7 @@ public class TowerController : MonoBehaviour
             originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[material];
 
-            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width, i * Height, 0);
+            originalTower[i].transform.position = new Vector3(widthMultiplier * Width * 1.5f, i * Height, 3 + 0.01f * i);
 
             originalTower[i].transform.parent = transform;
 
@@ -226,23 +289,54 @@ public class TowerController : MonoBehaviour
             changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[material];
 
-            changedTower[i].transform.position = new Vector3(widthMultiplier * Width, i * Height, 0);
+            changedTower[i].transform.position = new Vector3(0, i * Height, 0.01f * i);
 
             changedTower[i].transform.parent = transform;
 
             //changedBlocks.Add(new TowerBlock { blockPosition = i, color = color, targetWorldPosition = changedTower[i].transform.position });
         }
-        ReverseStatic(3);
-        RotateStatic(3);
+
+        RandomizeTower();
     }
+
+    public void RandomizeTower()
+    {
+        var timesRandomized = Random.Range(4, 8);
+
+        for (int i = 0; i < timesRandomized; i++)
+        {
+            var split = Random.Range(1, size - 1);
+            var reverse = Random.Range(0, 1);
+
+            if (reverse == 1)
+            {
+                ReverseStatic(split);
+            }
+            else
+            {
+                RotateStatic(split);
+            }
+        }
+
+    }
+
 
     public void LoadTower()
     {
+        totalMoves = 0;
+        gameTime = 0;
+
+        blockTemplate = GameObject.Instantiate(originalTemplate);
+
+        blockTemplate.transform.position = new Vector3(0, 0, -100);
+
         originalTower = new List<GameObject>();
         var loadedTower = SaveController.towerData;
 
+        var modifier = (float)defaultSize / loadedTower.colors.Count;
+
         blockTemplate.transform.localScale = new Vector3(blockTemplate.transform.localScale.x,
-            blockTemplate.transform.localScale.y, blockTemplate.transform.localScale.z);
+            blockTemplate.transform.localScale.y * modifier, blockTemplate.transform.localScale.z);
 
         for (int i = 0; i < loadedTower.colors.Count; i++)
         {
@@ -251,7 +345,7 @@ public class TowerController : MonoBehaviour
             originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[loadedTower.colors[i]];
 
-            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width, i * Height, 0);
+            originalTower[i].transform.position = new Vector3(widthMultiplier * Width * 1.5f, i * Height, 3);
 
             originalTower[i].transform.parent = transform;
 
@@ -261,7 +355,7 @@ public class TowerController : MonoBehaviour
 
             changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[loadedTower.colors[i]];
-            changedTower[i].transform.position = new Vector3(widthMultiplier * Width, i * Height, 0);
+            changedTower[i].transform.position = new Vector3(widthMultiplier * Width * 0, i * Height, 0.001f * i);
 
             changedTower[i].transform.parent = transform;
 

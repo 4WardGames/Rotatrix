@@ -57,6 +57,11 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeAim(InputAction.CallbackContext context)
     {
+        if (Time.timeScale == 0.0f)
+        {
+            return;
+        }
+
         if (touchPos == Vector2.zero)
         {
             originalTouchPos = context.ReadValue<Vector2>();
@@ -75,6 +80,11 @@ public class PlayerController : MonoBehaviour
     }
     public void Stop(InputAction.CallbackContext context)
     {
+        if (Time.timeScale == 0.0f)
+        {
+            return;
+        }
+
         if (validBlockSelected)
         {
             var value = context.ReadValue<UnityEngine.InputSystem.TouchPhase>();
