@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour
     public Image[] StarsIMG=new Image[3];
     public Button[] CampaignButtons=new Button[12];
 
+
     public bool StarWarn;
     public float ClockCounter;
 
@@ -40,6 +41,7 @@ public class UIController : MonoBehaviour
         }
 
         LevelButtons(3);
+
     }
 
     public void NewLevel()
@@ -128,6 +130,7 @@ public class UIController : MonoBehaviour
     //Wyœwietl czas
     public void UpdateTime(float time)
     {
+
 
         string str = ((int)time / 60).ToString();
         if (time % 60 < 10)
