@@ -34,6 +34,15 @@ public class PlayerController : MonoBehaviour
             {
                 if (Math.Abs(touchPos.x - originalTouchPos.x) > Math.Abs(touchPos.y - originalTouchPos.y))
                 {
+                    if (touchPos.x > originalTouchPos.x)
+                    {
+                        TowerController.rotateDown = false;
+                    }
+                    else
+                    {
+                        TowerController.rotateDown = true;
+                    }
+
                     TowerController.Rotate(0);
                 }
                 else

@@ -8,8 +8,8 @@ public class UIController : MonoBehaviour
     private Canvas[] UIs = new Canvas[9];
     private TMP_Text TimeText;
     public bool[] Stars;
-    public Image[] StarsIMG=new Image[3];
-    public Button[] CampaignButtons=new Button[12];
+    public Image[] StarsIMG = new Image[3];
+    public Button[] CampaignButtons = new Button[12];
 
 
     public bool StarWarn;
@@ -35,7 +35,7 @@ public class UIController : MonoBehaviour
         StarsIMG[1] = GameObject.Find("Star2").GetComponent<Image>();
         StarsIMG[2] = GameObject.Find("Star3").GetComponent<Image>();
 
-        for(int i = 0; i < 12; i++)
+        for (int i = 0; i < 12; i++)
         {
             CampaignButtons[i] = GameObject.Find("Lv" + (i + 1)).GetComponent<Button>();
         }
@@ -81,7 +81,7 @@ public class UIController : MonoBehaviour
 
     public void LevelButtons(int u)
     {
-        for(int i = 0; i < 12; i++)
+        for (int i = 0; i < 12; i++)
         {
             if (i < u)
             {
@@ -141,7 +141,7 @@ public class UIController : MonoBehaviour
         {
             str += ":";
         }
-        str+= (int)time % 60;
+        str += (int)time % 60;
         TimeText.text = str;
     }
 
@@ -163,6 +163,6 @@ public class UIController : MonoBehaviour
                 StarsIMG[2].color = new Color(temp, temp, temp, 1);
             }
         }
-        UpdateTime(1);
+        //UpdateTime(1);
     }
 }

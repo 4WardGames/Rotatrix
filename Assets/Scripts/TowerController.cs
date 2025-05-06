@@ -18,11 +18,14 @@ public class TowerController : MonoBehaviour
     public List<GameObject> changedTower = new List<GameObject>();
 
     public bool reverseDown = true;
+    public bool rotateDown = true;
 
     public List<Color> colorList;
     public List<Material> materialList;
 
     private int selectedBlock = -1;
+
+    private int selectedLevel = -1;
 
     private List<Animation> animations = new List<Animation>();
 
@@ -135,7 +138,7 @@ public class TowerController : MonoBehaviour
         _totalMoves = 0;
         gameTime = 0;
 
-        _controller.ChangeMenu(0);
+        _controller.ChangeMenu(8);
     }
     public void RotateStatic(int splitPoint)
     {
@@ -174,18 +177,42 @@ public class TowerController : MonoBehaviour
                 return;
             }
         }
-        Vector3 rotationPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint / 2 * Height + center, 0);
-        BlockRotation newAnimation = new BlockRotation(rotationPoint);
-
-        for (int i = 0; i <= splitPoint / 2; i++)
+        Vector3 rotationPoint;
+        BlockRotation newAnimation;
+        if (rotateDown)
         {
-            (changedTower[splitPoint - i], changedTower[i]) = (changedTower[i], changedTower[splitPoint - i]);
+            rotationPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint / 2 * Height + center, 0);
+            newAnimation = new BlockRotation(rotationPoint, true);
+
+            for (int i = 0; i <= splitPoint / 2; i++)
+            {
+                (changedTower[splitPoint - i], changedTower[i]) = (changedTower[i], changedTower[splitPoint - i]);
+            }
+
+            for (int i = 0; i <= splitPoint; i++)
+            {
+                newAnimation.animatedBlocks.Add(changedTower[i]);
+            }
+        }
+        else
+        {
+            rotationPoint = new Vector3(widthMultiplier * Width * 0,
+                (((float)splitPoint + changedTower.Count - 1) / 2) * Height + center, 0);
+
+            newAnimation = new BlockRotation(rotationPoint, false);
+
+            for (int i = splitPoint; i < (changedTower.Count - splitPoint + 1) / 2 + splitPoint; i++)
+            {
+                (changedTower[changedTower.Count - 1 + splitPoint - i], changedTower[i])
+                    = (changedTower[i], changedTower[changedTower.Count - 1 + splitPoint - i]);
+            }
+
+            for (int i = splitPoint; i < changedTower.Count; i++)
+            {
+                newAnimation.animatedBlocks.Add(changedTower[i]);
+            }
         }
 
-        for (int i = 0; i <= splitPoint; i++)
-        {
-            newAnimation.animatedBlocks.Add(changedTower[i]);
-        }
 
         animations.Add(newAnimation);
         CheckVictory();
@@ -237,7 +264,6 @@ public class TowerController : MonoBehaviour
 
     public bool SelectPoint(Vector3 point)
     {
-        // new Vector3(widthMultiplier * Width * 0, i * Height, 0);
         if (point.x > widthMultiplier * 0 - Width && point.x < widthMultiplier * 0 + Width)
         {
             for (int i = 0; i <= size; i++)
@@ -255,6 +281,7 @@ public class TowerController : MonoBehaviour
 
     public void GenerateTower()
     {
+        selectedLevel = -1;
         totalMoves = 0;
         gameTime = 0;
 
@@ -278,11 +305,9 @@ public class TowerController : MonoBehaviour
             originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[material];
 
-            originalTower[i].transform.position = new Vector3(widthMultiplier * Width * 1.5f, i * Height, 3 + 0.01f * i);
+            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3 + 0.01f * i);
 
             originalTower[i].transform.parent = transform;
-
-            //originalBlocks.Add(new TowerBlock { blockPosition = i, color = color, targetWorldPosition = originalTower[i].transform.position });
 
             changedTower.Add(Instantiate(blockTemplate));
 
@@ -293,7 +318,6 @@ public class TowerController : MonoBehaviour
 
             changedTower[i].transform.parent = transform;
 
-            //changedBlocks.Add(new TowerBlock { blockPosition = i, color = color, targetWorldPosition = changedTower[i].transform.position });
         }
 
         RandomizeTower();
@@ -323,6 +347,7 @@ public class TowerController : MonoBehaviour
 
     public void LoadTower()
     {
+        selectedLevel = 0;
         totalMoves = 0;
         gameTime = 0;
 
@@ -345,7 +370,7 @@ public class TowerController : MonoBehaviour
             originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
                 = materialList[loadedTower.colors[i]];
 
-            originalTower[i].transform.position = new Vector3(widthMultiplier * Width * 1.5f, i * Height, 3);
+            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3);
 
             originalTower[i].transform.parent = transform;
 
@@ -374,6 +399,18 @@ public class TowerController : MonoBehaviour
             }
         }
     }
+
+    public void RestartLevel()
+    {
+        if (selectedLevel == -1)
+        {
+            GenerateTower();
+        }
+        else
+        {
+            LoadTower();
+        }
+    }
 }
 
 public class TowerBlock
@@ -395,10 +432,12 @@ public class BlockRotation : Animation
     public Vector3 rotationPoint;
 
     public float maxRotation = 0;
+    public bool rotateDown = true;
 
-    public BlockRotation(Vector3 rotationPoint)
+    public BlockRotation(Vector3 rotationPoint, bool rotateDown)
     {
         this.rotationPoint = rotationPoint;
+        this.rotateDown = rotateDown;
     }
 
     public bool Animate(float speed)
@@ -412,9 +451,19 @@ public class BlockRotation : Animation
             correction = maxRotation - 180;
         }
 
-        foreach (var block in animatedBlocks)
+        if (rotateDown)
         {
-            block.transform.RotateAround(rotationPoint, Vector3.forward, speed * Time.deltaTime - correction);
+            foreach (var block in animatedBlocks)
+            {
+                block.transform.RotateAround(rotationPoint, Vector3.forward, speed * Time.deltaTime - correction);
+            }
+        }
+        else
+        {
+            foreach (var block in animatedBlocks)
+            {
+                block.transform.RotateAround(rotationPoint, Vector3.forward, speed * Time.deltaTime - correction);
+            }
         }
 
 
@@ -437,6 +486,7 @@ public class BlockReversal : Animation
 
     public Vector3 topReversalPoint;
     public List<Vector3> bottomReversalPoints = new List<Vector3>();
+    public List<Vector3> topReversalPoints = new List<Vector3>();
 
     int splitPoint;
 
@@ -447,6 +497,11 @@ public class BlockReversal : Animation
     {
         this.splitPoint = splitPoint;
         topReversalPoint = reversalPoint - new Vector3(0, splitPoint * height, 0);
+
+        topReversalPoints.Add(reversalPoint - new Vector3(-widthMultiplier * 0.75f, 0, 0));
+        topReversalPoints.Add(reversalPoint - new Vector3(-widthMultiplier * 0.75f, splitPoint * height, 0));
+        topReversalPoints.Add(reversalPoint - new Vector3(0, splitPoint * height, 0));
+
         bottomReversalPoints.Add(reversalPoint - new Vector3(widthMultiplier * 0.75f, 0, 0));
         bottomReversalPoints.Add(reversalPoint - new Vector3(widthMultiplier * 0.75f, (splitPoint - count + 1) * height, 0));
         bottomReversalPoints.Add(reversalPoint - new Vector3(0, (splitPoint - count + 1) * height, 0));
@@ -459,16 +514,50 @@ public class BlockReversal : Animation
     {
         bool moved = false;
         int counter = 0;
+        //foreach (var block in topBlocks)
+        //{
+        //    if (topReversalPoint - new Vector3(0, counter, 0) == block.transform.position || !moveDown)
+        //    {
+        //        break;
+        //    }
+        //    var change = topReversalPoint - new Vector3(0, counter * height, 0) - block.transform.position;
+        //    counter++;
+
+        //    change = Vector3.ClampMagnitude(change, 0.0005f * speed);
+
+        //    block.transform.position += change;
+        //    moved = true;
+        //}
+
+        counter = 0;
+
         foreach (var block in topBlocks)
         {
-            if (topReversalPoint - new Vector3(0, counter, 0) == block.transform.position || !moveDown)
+            if (topReversalPoints.Count == 0)
             {
                 break;
             }
-            var change = topReversalPoint - new Vector3(0, counter * height, 0) - block.transform.position;
+            var change = topReversalPoints[0] + new Vector3(0, (counter) * height, 0) - block.transform.position;
+            if (change == Vector3.zero)
+            {
+                topReversalPoints.Remove(topReversalPoints[0]);
+                moveDown = true;
+                if (topReversalPoints.Count == 0)
+                {
+                    break;
+                }
+                change = topReversalPoints[0] + new Vector3(0, (counter) * height, 0) - block.transform.position;
+            }
             counter++;
 
-            change = Vector3.ClampMagnitude(change, 0.0005f * speed);
+            var multiplier = 2;
+
+            if (topReversalPoints.Count == 1)
+            {
+                multiplier = 1;
+            }
+
+            change = Vector3.ClampMagnitude(change, 0.0002f * speed * multiplier);
 
             block.transform.position += change;
             moved = true;
