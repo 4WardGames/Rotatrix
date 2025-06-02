@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class UIController : MonoBehaviour
 {
@@ -29,7 +30,9 @@ public class UIController : MonoBehaviour
         UIs[6] = GameObject.Find("CampaignMenu").GetComponent<Canvas>();
         UIs[7] = GameObject.Find("ChallengeMenu").GetComponent<Canvas>();
         UIs[8] = GameObject.Find("GameOverMenu").GetComponent<Canvas>();
+        Stars = new bool[3] { true, true, true };
         ChangeMenu(0);
+
 
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
         StarsIMG[1] = GameObject.Find("Star2").GetComponent<Image>();
@@ -39,9 +42,6 @@ public class UIController : MonoBehaviour
         {
             CampaignButtons[i] = GameObject.Find("Lv" + (i + 1)).GetComponent<Button>();
         }
-
-        LevelButtons(3);
-
     }
 
     public void NewLevel()
@@ -56,7 +56,7 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        if (id == 3)
+        if (id == 3||id==8)
         {
             Time.timeScale = 1.0f;
         }
@@ -96,19 +96,68 @@ public class UIController : MonoBehaviour
 
     }
 
+    public void UpdatePlayerStars(int stars)
+    {
+        GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text= stars.ToString();
+        LevelButtons(stars / 3);
+    }
+
     public void StarWarning()
     {
+        //Nie u¿ywaæ
         StarWarn = true;
     }
 
     public void LoseStar()
     {
-
+        //Wywo³aæ przy stracie gwiazdki
+        for (int i = 0; i < 3; i++)
+        {
+            if (Stars[2-i] == true)
+            {
+                Stars[2-i] = false;
+                StarsIMG[2 - i].color = Color.black;
+                break;
+            }
+        }
     }
 
-    public void EndGame(int stars)
+    public void NewGame()
     {
+        for (int i = 0; i < 3; i++)
+        {
+            Stars[i] = true;
+            StarsIMG[i].color = Color.white;
+        
+                
+        
+        }
+    }
+
+    public void EndGame()
+    {
+        int n = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            if (Stars[i] == true)
+            {
+                n++;
+            }
+        }
+        Time.timeScale = 1;
         ChangeMenu(8);
+        StartCoroutine(StarsAnim(n));
+    }
+
+    IEnumerator StarsAnim(int n)
+    {
+        for(int i = 0; i < n; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            StarsIMG[i].color = Color.white;
+            GameObject.Find("EndStar" + (i + 1)).GetComponent<Image>().color = Color.white;
+            GameObject.Find("EndStar" + (i + 1)).GetComponent<Animator>().Play("Anim");
+        }
     }
 
     //SETTINGS
@@ -130,8 +179,6 @@ public class UIController : MonoBehaviour
     //Wyœwietl czas
     public void UpdateTime(float time)
     {
-
-
         string str = ((int)time / 60).ToString();
         if (time % 60 < 10)
         {
@@ -148,7 +195,6 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
         if (StarWarn)
         {
             ClockCounter += 0.02f;
@@ -163,6 +209,5 @@ public class UIController : MonoBehaviour
                 StarsIMG[2].color = new Color(temp, temp, temp, 1);
             }
         }
-        //UpdateTime(1);
     }
 }
