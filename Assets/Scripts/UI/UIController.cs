@@ -1,7 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class UIController : MonoBehaviour
 {
@@ -42,6 +42,8 @@ public class UIController : MonoBehaviour
         {
             CampaignButtons[i] = GameObject.Find("Lv" + (i + 1)).GetComponent<Button>();
         }
+
+        //UpdatePlayerStars(0);
     }
 
     public void NewLevel()
@@ -56,7 +58,7 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        if (id == 3||id==8)
+        if (id == 3 || id == 8)
         {
             Time.timeScale = 1.0f;
         }
@@ -98,8 +100,8 @@ public class UIController : MonoBehaviour
 
     public void UpdatePlayerStars(int stars)
     {
-        GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text= stars.ToString();
-        LevelButtons(stars / 3);
+        GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text = stars.ToString();
+        LevelButtons(stars + 1);
     }
 
     public void StarWarning()
@@ -108,14 +110,23 @@ public class UIController : MonoBehaviour
         StarWarn = true;
     }
 
+    public void SetStars(int stars)
+    {
+        for (int i = stars; i < 3; i++)
+        {
+            Stars[i] = false;
+            StarsIMG[i].color = Color.black;
+        }
+    }
+
     public void LoseStar()
     {
         //Wywo³aæ przy stracie gwiazdki
         for (int i = 0; i < 3; i++)
         {
-            if (Stars[2-i] == true)
+            if (Stars[2 - i] == true)
             {
-                Stars[2-i] = false;
+                Stars[2 - i] = false;
                 StarsIMG[2 - i].color = Color.black;
                 break;
             }
@@ -128,9 +139,9 @@ public class UIController : MonoBehaviour
         {
             Stars[i] = true;
             StarsIMG[i].color = Color.white;
-        
-                
-        
+
+
+
         }
     }
 
@@ -151,7 +162,7 @@ public class UIController : MonoBehaviour
 
     IEnumerator StarsAnim(int n)
     {
-        for(int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
         {
             yield return new WaitForSeconds(0.5f);
             StarsIMG[i].color = Color.white;

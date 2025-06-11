@@ -37,6 +37,16 @@ public class TowerController : MonoBehaviour
 
     private float gameTime = 0.0f;
 
+    private float minGameTime = 0.0f;
+
+    private float endOfTheGameTimer = 0.0f;
+
+    private int currentStars = 3;
+
+    private int minMoves = 0;
+
+    private int currentLevel = 0;
+
     private int _totalMoves = 0;
     private int totalMoves
     {
@@ -73,7 +83,9 @@ public class TowerController : MonoBehaviour
     void Start()
     {
         _controller = GameObject.Find("UI").GetComponent<UIController>();
+        Debug.Log("Pre load");
         SaveController.LoadLevel();
+        Debug.Log("Post load");
 
 
         //LoadTower();
@@ -92,9 +104,21 @@ public class TowerController : MonoBehaviour
             }
         }
 
-        gameTime += Time.deltaTime;
-        _controller.UpdateTime(gameTime);
+        if (endOfTheGameTimer > 0)
+        {
+            endOfTheGameTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            SetupStars();
+            gameTime += Time.fixedDeltaTime;
+            _controller.UpdateTime(gameTime);
+        }
 
+        if (endOfTheGameTimer < 0)
+        {
+            Win();
+        }
         //for (int i = 0; i < changedBlocks.Count; i++)
         //{
         //    if (changedBlocks[i].targetWorldPosition != changedTower[i].transform.position)
@@ -108,6 +132,42 @@ public class TowerController : MonoBehaviour
         //}
     }
 
+    private void SetupStars()
+    {
+        int stars = 0;
+
+        if (gameTime < minGameTime)
+        {
+            stars++;
+        }
+
+        if (totalMoves / minMoves < 1)
+        {
+            stars += 2;
+        }
+        else if (totalMoves / minMoves < 2)
+        {
+            stars += 1;
+        }
+
+        if (currentStars != stars)
+        {
+            currentStars = stars;
+            _controller.SetStars(stars);
+        }
+    }
+
+    private void Win()
+    {
+        ClearTower();
+
+        endOfTheGameTimer = 0;
+
+        _controller.UpdatePlayerStars(currentStars);
+        _controller.EndGame();
+
+        _controller.ChangeMenu(8);
+    }
     private void CheckVictory()
     {
         for (int i = 0; i < originalTower.Count; i++)
@@ -119,8 +179,11 @@ public class TowerController : MonoBehaviour
             }
         }
 
-        Debug.Log("Jest dobrze!");
+        endOfTheGameTimer = 3.0f;
+    }
 
+    public void ClearTower()
+    {
         foreach (var block in originalTower)
         {
             Destroy(block.gameObject);
@@ -137,9 +200,8 @@ public class TowerController : MonoBehaviour
 
         _totalMoves = 0;
         gameTime = 0;
-
-        _controller.ChangeMenu(8);
     }
+
     public void RotateStatic(int splitPoint)
     {
         for (int i = 0; i <= splitPoint / 2; i++)
@@ -150,6 +212,20 @@ public class TowerController : MonoBehaviour
             changedTower[splitPoint - i].transform.position = new Vector3(widthMultiplier * Width * 0, (splitPoint - i) * Height, 0);
         }
     }
+
+    public void RotateDownStatic(int splitPoint)
+    {
+        for (int i = splitPoint; i < (changedTower.Count - splitPoint + 1) / 2 + splitPoint; i++)
+        {
+            (changedTower[changedTower.Count - 1 + splitPoint - i], changedTower[i])
+                = (changedTower[i], changedTower[changedTower.Count - 1 + splitPoint - i]);
+
+            changedTower[i].transform.position = new Vector3(widthMultiplier * Width * 0, i * Height, 0);
+            changedTower[changedTower.Count - 1 + splitPoint - i].transform.position
+                = new Vector3(widthMultiplier * Width * 0, (changedTower.Count - 1 + splitPoint - i) * Height, 0);
+        }
+    }
+
     public void ReverseStatic(int splitPoint)
     {
         splitPoint++;
@@ -281,6 +357,8 @@ public class TowerController : MonoBehaviour
 
     public void GenerateTower()
     {
+        _controller.NewGame();
+
         selectedLevel = -1;
         totalMoves = 0;
         gameTime = 0;
@@ -327,6 +405,9 @@ public class TowerController : MonoBehaviour
     {
         var timesRandomized = Random.Range(4, 8);
 
+        minMoves = timesRandomized;
+        minGameTime = minMoves * 7;
+
         for (int i = 0; i < timesRandomized; i++)
         {
             var split = Random.Range(1, size - 1);
@@ -345,8 +426,16 @@ public class TowerController : MonoBehaviour
     }
 
 
+    public void LoadLevel(int level)
+    {
+        currentLevel = level;
+        LoadTower();
+    }
+
     public void LoadTower()
     {
+        _controller.NewGame();
+
         selectedLevel = 0;
         totalMoves = 0;
         gameTime = 0;
@@ -356,7 +445,9 @@ public class TowerController : MonoBehaviour
         blockTemplate.transform.position = new Vector3(0, 0, -100);
 
         originalTower = new List<GameObject>();
-        var loadedTower = SaveController.towerData;
+        var loadedTower = SaveController.leveleMateuszka[currentLevel];
+
+        size = loadedTower.colors.Count;
 
         var modifier = (float)defaultSize / loadedTower.colors.Count;
 
@@ -391,17 +482,28 @@ public class TowerController : MonoBehaviour
         {
             if (transformation.rotate)
             {
-                RotateStatic(transformation.splitPoint);
+                if (transformation.normal)
+                {
+                    RotateStatic(transformation.splitPoint);
+                }
+                else
+                {
+                    RotateDownStatic(transformation.splitPoint);
+                }
             }
             else
             {
                 ReverseStatic(transformation.splitPoint);
             }
         }
+
+        minMoves = loadedTower.transforms.Count;
+        minGameTime = minMoves * 7;
     }
 
     public void RestartLevel()
     {
+        ClearTower();
         if (selectedLevel == -1)
         {
             GenerateTower();

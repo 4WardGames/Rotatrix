@@ -6,6 +6,7 @@ using UnityEngine;
 public static class SaveController
 {
     public static TowerData towerData;
+    public static List<TowerData> leveleMateuszka = new List<TowerData>();
     private const string towerPath = "Tower/TowerData";
     public static void SaveTower()
     {
@@ -27,15 +28,44 @@ public static class SaveController
 
     public static void LoadLevel()
     {
-        var otherData = Resources.Load(towerPath) as TextAsset;
+        var otherData = Resources.LoadAll<TextAsset>("Tower/BaseCampaign");
 
-        string tower = otherData.text;
-        towerData = JsonUtility.FromJson<TowerData>(tower);
+        foreach (var towerText in otherData)
+        {
+            leveleMateuszka.Add(JsonUtility.FromJson<TowerData>(towerText.ToString()));
+        }
+
+        //foreach (var d in Directory.GetDirectories(levelPath))
+        //{
+        //    Debug.Log(d);
+        //    foreach (var f in Directory.GetFiles(d))
+        //    {
+        //        string towerText = File.ReadAllText(f);
+        //        Debug.Log(f);
+
+        //        if (f.Contains("meta"))
+        //        {
+        //            continue;
+        //        }
+
+        //        leveleMateuszka.Add(JsonUtility.FromJson<TowerData>(towerText));
+        //        badCounter--;
+        //        if (badCounter == 0)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //}
+        //var otherData = Resources.Load(towerPath) as TextAsset;
+
+        //string tower = otherData.text;
+        //towerData = JsonUtility.FromJson<TowerData>(tower);
     }
 
     public static void LoadTower()
     {
         var path = Application.persistentDataPath + "/Tower.json";
+
         if (File.Exists(path))
         {
             Debug.Log(path);
@@ -65,4 +95,5 @@ public class BlockTransformation
 {
     public int splitPoint;
     public bool rotate;
+    public bool normal;
 }
