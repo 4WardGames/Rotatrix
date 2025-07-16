@@ -24,6 +24,7 @@ public class TowerController : MonoBehaviour
     public List<Material> materialList;
 
     private int selectedBlock = -1;
+    public HighlightedBlocks highlightedBlocks = HighlightedBlocks.None;
 
     private int selectedLevel = -1;
 
@@ -104,6 +105,36 @@ public class TowerController : MonoBehaviour
             }
         }
 
+        foreach (var block in changedTower)
+        {
+            var tempBlockMeshRenderer = block.transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+            tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material,
+                    blockTemplate.transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] };
+        }
+
+        if (selectedBlock > 0)
+        {
+            var tempBlockMeshRenderer = changedTower[selectedBlock].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+            tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[4] };
+
+            if (highlightedBlocks == HighlightedBlocks.Top)
+            {
+                for (int i = selectedBlock + 1; i < changedTower.Count; i++)
+                {
+                    tempBlockMeshRenderer = changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+                    tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[4] };
+                }
+            }
+            else if (highlightedBlocks == HighlightedBlocks.Bottom)
+            {
+                for (int i = selectedBlock - 1; i >= 0; i--)
+                {
+                    tempBlockMeshRenderer = changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+                    tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[4] };
+                }
+            }
+        }
+
         if (endOfTheGameTimer > 0)
         {
             endOfTheGameTimer -= Time.fixedDeltaTime;
@@ -119,17 +150,6 @@ public class TowerController : MonoBehaviour
         {
             Win();
         }
-        //for (int i = 0; i < changedBlocks.Count; i++)
-        //{
-        //    if (changedBlocks[i].targetWorldPosition != changedTower[i].transform.position)
-        //    {
-        //        var change = changedBlocks[i].targetWorldPosition - changedTower[i].transform.position;
-
-        //        change = Vector3.ClampMagnitude(change, 0.05f);
-
-        //        changedTower[i].transform.position += change;
-        //    }
-        //}
     }
 
     private void SetupStars()
@@ -162,8 +182,9 @@ public class TowerController : MonoBehaviour
         ClearTower();
 
         endOfTheGameTimer = 0;
-
+        SaveController.UpdateLevelStars(currentLevel, currentStars);
         _controller.UpdatePlayerStars(currentStars);
+
         _controller.EndGame();
 
         _controller.ChangeMenu(8);
@@ -198,6 +219,7 @@ public class TowerController : MonoBehaviour
         originalTower.Clear();
         changedTower.Clear();
 
+        selectedBlock = -1;
         _totalMoves = 0;
         gameTime = 0;
     }
@@ -292,6 +314,8 @@ public class TowerController : MonoBehaviour
 
         animations.Add(newAnimation);
         CheckVictory();
+
+        selectedBlock = -1;
     }
 
     public void Reverse(int splitPoint)
@@ -336,6 +360,8 @@ public class TowerController : MonoBehaviour
 
         animations.Add(newAnimation);
         CheckVictory();
+
+        selectedBlock = -1;
     }
 
     public bool SelectPoint(Vector3 point)
@@ -458,9 +484,15 @@ public class TowerController : MonoBehaviour
         {
             originalTower.Add(Instantiate(blockTemplate));
 
-            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
-                = materialList[loadedTower.colors[i]];
+            //originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+            //    = materialList[loadedTower.colors[i]];
 
+            var originalBlock = originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+
+            originalBlock.materials = new Material[2] { materialList[loadedTower.colors[i]], materialList[loadedTower.colors[i]] };
+            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] = materialList[loadedTower.colors[i]];
+            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] = materialList[loadedTower.colors[i]];
+            Debug.Log(originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials);
             originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3);
 
             originalTower[i].transform.parent = transform;
@@ -708,4 +740,9 @@ public class BlockReversal : Animation
         }
     }
 
+}
+
+public enum HighlightedBlocks
+{
+    None, Top, Bottom
 }

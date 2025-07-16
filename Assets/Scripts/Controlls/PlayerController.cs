@@ -17,20 +17,68 @@ public class PlayerController : MonoBehaviour
     private float screenWidth;
     private float screenHeight;
 
+    private GameObject rotationArrow;
+    private GameObject reverseArrows;
+
     // Start is called before the first frame update
     void Start()
     {
         screenHeight = Screen.height;
         screenWidth = Screen.width;
+
+        rotationArrow = Instantiate((GameObject)Resources.Load("Textures/Arrow_Rotate"));
+        reverseArrows = Instantiate((GameObject)Resources.Load("Textures/Arrow_UpDown"));
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        rotationArrow.SetActive(false);
+        reverseArrows.SetActive(false);
+        TowerController.highlightedBlocks = HighlightedBlocks.None;
+
+        if ((touchPos - originalTouchPos).magnitude > 200)
+        {
+            TowerController.highlightedBlocks = HighlightedBlocks.Top;
+            if (Math.Abs(touchPos.x - originalTouchPos.x) > Math.Abs(touchPos.y - originalTouchPos.y))
+            {
+                if (touchPos.x > originalTouchPos.x)
+                {
+                    rotationArrow.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 5));
+                    rotationArrow.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                }
+                else
+                {
+                    rotationArrow.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 5));
+
+                    rotationArrow.transform.rotation = Quaternion.Euler(0f, 0f, 180f);
+                    TowerController.highlightedBlocks = HighlightedBlocks.Bottom;
+                }
+                rotationArrow.SetActive(true);
+            }
+            else
+            {
+                if (touchPos.y > originalTouchPos.y)
+                {
+                    reverseArrows.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 5));
+                    TowerController.highlightedBlocks = HighlightedBlocks.Bottom;
+                }
+                else
+                {
+                    reverseArrows.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 5));
+                }
+
+                reverseArrows.SetActive(true);
+            }
+        }
+
+
         if (updateTouch)
         {
             updateTouch = false;
-            if ((touchPos - originalTouchPos).magnitude > 50)
+            rotationArrow.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, 10));
+
+            if ((touchPos - originalTouchPos).magnitude > 200)
             {
                 if (Math.Abs(touchPos.x - originalTouchPos.x) > Math.Abs(touchPos.y - originalTouchPos.y))
                 {

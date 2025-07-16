@@ -8,6 +8,9 @@ public static class SaveController
     public static TowerData towerData;
     public static List<TowerData> leveleMateuszka = new List<TowerData>();
     private const string towerPath = "Tower/TowerData";
+    public static Levels levels = new Levels();
+
+
     public static void SaveTower()
     {
         var path = Application.persistentDataPath + "/Tower.json";
@@ -34,52 +37,38 @@ public static class SaveController
         {
             leveleMateuszka.Add(JsonUtility.FromJson<TowerData>(towerText.ToString()));
         }
-
-        //foreach (var d in Directory.GetDirectories(levelPath))
-        //{
-        //    Debug.Log(d);
-        //    foreach (var f in Directory.GetFiles(d))
-        //    {
-        //        string towerText = File.ReadAllText(f);
-        //        Debug.Log(f);
-
-        //        if (f.Contains("meta"))
-        //        {
-        //            continue;
-        //        }
-
-        //        leveleMateuszka.Add(JsonUtility.FromJson<TowerData>(towerText));
-        //        badCounter--;
-        //        if (badCounter == 0)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //}
-        //var otherData = Resources.Load(towerPath) as TextAsset;
-
-        //string tower = otherData.text;
-        //towerData = JsonUtility.FromJson<TowerData>(tower);
     }
 
-    public static void LoadTower()
+    public static void SaveLevelStars()
     {
-        var path = Application.persistentDataPath + "/Tower.json";
+        var path = Application.persistentDataPath + "/LevelStars.json";
 
+        string saveLevels = JsonUtility.ToJson(levels);
+        File.WriteAllText(path, saveLevels);
+        Debug.Log("Good");
+    }
+
+    public static void LoadLevelStars()
+    {
+        var path = Application.persistentDataPath + "/LevelStars.json";
         if (File.Exists(path))
         {
             Debug.Log(path);
 
-            string tower = File.ReadAllText(path);
-            towerData = JsonUtility.FromJson<TowerData>(tower);
-            Debug.Log(tower);
-        }
-        else
-        {
-            Debug.Log("bad");
+            string loadedLevels = File.ReadAllText(path);
+            var data = JsonUtility.FromJson<Levels>(loadedLevels);
+
+            levels = data;
+
+            Debug.Log(loadedLevels);
         }
     }
 
+    public static void UpdateLevelStars(int level, int stars)
+    {
+        levels.stars[level] = stars;
+        SaveLevelStars();
+    }
 }
 
 [Serializable]
@@ -96,4 +85,10 @@ public class BlockTransformation
     public int splitPoint;
     public bool rotate;
     public bool normal;
+}
+
+[Serializable]
+public class Levels
+{
+    public int[] stars = new int[15];
 }
