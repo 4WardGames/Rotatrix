@@ -42,7 +42,8 @@ public class UIController : MonoBehaviour
         {
             CampaignButtons[i] = GameObject.Find("Lv" + (i + 1)).GetComponent<Button>();
         }
-
+        SaveController.LoadLevelStars();
+        SetLevelButtons();
         //UpdatePlayerStars(0);
         UpdatePlayerStars(0);
         SetStars(1);
@@ -103,8 +104,32 @@ public class UIController : MonoBehaviour
 
     public void UpdatePlayerStars(int stars)
     {
+        SetLevelButtons();
+    }
+
+    public void SetLevelButtons()
+    {
+        var stars = 0;
+        var levelStars = SaveController.levels;
+
+        foreach (var level in levelStars.stars)
+        {
+            stars += level;
+        }
+
+        for (int i = 0; i < 12; i++)
+        {
+            if (i <= stars / 2)
+            {
+                CampaignButtons[i].interactable = true;
+            }
+
+            else
+            {
+                CampaignButtons[i].interactable = false;
+            }
+        }
         GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text = stars.ToString();
-        LevelButtons(stars + 1);
     }
 
     public void StarWarning()
