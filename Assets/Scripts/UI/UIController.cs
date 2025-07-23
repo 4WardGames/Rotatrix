@@ -44,6 +44,9 @@ public class UIController : MonoBehaviour
         }
 
         //UpdatePlayerStars(0);
+        UpdatePlayerStars(0);
+        SetStars(1);
+        EndGame();
     }
 
     public void NewLevel()
@@ -150,6 +153,7 @@ public class UIController : MonoBehaviour
         int n = 0;
         for (int i = 0; i < 3; i++)
         {
+            GameObject.Find("EndStar" + (i + 1)).GetComponent<Image>().color = Color.black;
             if (Stars[i] == true)
             {
                 n++;
