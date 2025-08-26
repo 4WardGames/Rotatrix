@@ -10,8 +10,9 @@ public class UIController : MonoBehaviour
     private TMP_Text TimeText;
     public bool[] Stars;
     public Image[] StarsIMG = new Image[3];
-    public Button[] CampaignButtons = new Button[12];
-
+    public Button[,] CampaignButtons = new Button[12,3];
+    public int SelCampaign = 0;
+    public Canvas[] Campaigns = new Canvas[3];
 
     public bool StarWarn;
     public float ClockCounter;
@@ -40,14 +41,21 @@ public class UIController : MonoBehaviour
 
         for (int i = 0; i < 12; i++)
         {
-            CampaignButtons[i] = GameObject.Find("Lv" + (i + 1)).GetComponent<Button>();
+            for(int j = 0; j < 3; j++)
+            {
+                CampaignButtons[i,j] = GameObject.Find(j+"Lv" + (i + 1)).GetComponent<Button>();
+            }
         }
+        for(int i =0; i < 3; i++)
+        {
+            Campaigns[i] = GameObject.Find("Cmp" + i).GetComponent<Canvas>();
+            Campaigns[i].enabled = false;
+        }
+        Campaigns[0].enabled = true;
         SaveController.LoadLevelStars();
         SetLevelButtons();
-        //UpdatePlayerStars(0);
         UpdatePlayerStars(0);
         SetStars(1);
-        EndGame();
     }
 
     public void NewLevel()
@@ -89,14 +97,17 @@ public class UIController : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            if (i < u)
+            for(int j = 0; j < 3; j++)
             {
-                CampaignButtons[i].interactable = true;
-            }
+                if (i < u)
+                {
+                    CampaignButtons[i,j].interactable = true;
+                }
 
-            else
-            {
-                CampaignButtons[i].interactable = false;
+                else
+                {
+                    CampaignButtons[i,j].interactable = false;
+                }
             }
         }
 
@@ -116,17 +127,19 @@ public class UIController : MonoBehaviour
         {
             stars += level;
         }
-
-        for (int i = 0; i < 12; i++)
+        for (int j = 0; j < 3; j++)
         {
-            if (i <= stars / 2)
+            for (int i = 0; i < 12; i++)
             {
-                CampaignButtons[i].interactable = true;
-            }
+                if (i+(j*12) <= stars / 2)
+                {
+                    CampaignButtons[i, j].interactable = true;
+                }
 
-            else
-            {
-                CampaignButtons[i].interactable = false;
+                else
+                {
+                    CampaignButtons[i, j].interactable = false;
+                }
             }
         }
         GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text = stars.ToString();
@@ -187,6 +200,22 @@ public class UIController : MonoBehaviour
         Time.timeScale = 1;
         ChangeMenu(8);
         StartCoroutine(StarsAnim(n));
+    }
+
+    public void ChangeCampaign(int delta)
+    {
+        Campaigns[SelCampaign].enabled = false;
+        SelCampaign += delta;
+
+        if (SelCampaign < 0)
+        {
+            SelCampaign = 0;
+        }
+        else if (SelCampaign > 2)
+        {
+            SelCampaign = 2;
+        }
+        Campaigns[SelCampaign].enabled = true;
     }
 
     IEnumerator StarsAnim(int n)

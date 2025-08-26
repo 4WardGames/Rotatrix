@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private float screenWidth;
     private float screenHeight;
 
+    [SerializeField]
     private GameObject rotationArrow;
     private GameObject reverseArrows;
 

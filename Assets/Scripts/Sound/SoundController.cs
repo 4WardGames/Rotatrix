@@ -11,14 +11,18 @@ public class SoundController : MonoBehaviour
 
     public AudioMixer soundsMixer;
     public AudioMixer musicMixer;
+    public AudioSource Music;
 
 
     void Start()
     {
-        soundsMixer = Resources.Load<AudioMixer>("Audio/MusicMixer");
-        musicMixer = Resources.Load<AudioMixer>("Audio/SoundsMixer");
+        Music = GameObject.Find("Music").GetComponent<AudioSource>();
+        soundsMixer = Resources.Load<AudioMixer>("Audio/SoundsMixer");
+        musicMixer = Resources.Load<AudioMixer>("Audio/MusicMixer");
         Assets.LoadResources();
         PlaySound(SoundsAssets.sound.sndSplit);
+        ChangeMusicVolume(8);
+        ChangeSoundVolume(8);
     }
 
     public void PlaySound(SoundsAssets.sound sound)
@@ -31,9 +35,35 @@ public class SoundController : MonoBehaviour
         this.transform.GetComponent<AudioSource>().PlayOneShot(Assets.GetSound(SoundsAssets.sound.sndBtn));
     }
 
-    void FixedUpdate()
+    public void ChangeMusicVolume(float volume)
     {
-        
+        musicMixer.SetFloat("MasterVolume", -50f + 5 * volume);
+    }
+
+    public void ChangeSoundVolume(float volume)
+    {
+        soundsMixer.SetFloat("MasterVolume", -50f + 5 * volume);
+    }
+
+    void Update()
+    {
+        if (Music.clip.length<=Music.time)
+        {
+            int r = Random.Range(0, 3);
+            switch (r)
+            {
+                case 0:
+                Music.clip = Assets.GetMusic(SoundsAssets.music.MainEvent);
+                    break;
+                case 1:
+                    Music.clip = Assets.GetMusic(SoundsAssets.music.Block_by_block);
+                    break;
+                case 2:
+                    Music.clip = Assets.GetMusic(SoundsAssets.music.Blocked);
+                    break;
+            }
+            Music.Play();
+        }
     }
 }
 
@@ -45,7 +75,7 @@ public class SoundsAssets
     #endregion
 
     #region Music
-    AudioClip[] Musicc = new AudioClip[3];
+    AudioClip[] Music = new AudioClip[3];
 
     #endregion
 
@@ -58,6 +88,9 @@ public class SoundsAssets
 
     public enum music
     {
+        MainEvent,
+        Block_by_block,
+        Blocked,
         //enumy muz
     }
 
@@ -66,6 +99,10 @@ public class SoundsAssets
         Sounds[0] = Resources.Load<AudioClip>("Audio/Sounds/Button");
         Sounds[1] = Resources.Load<AudioClip>("Audio/Sounds/Comb");
         Sounds[2] = Resources.Load<AudioClip>("Audio/Sounds/Sep");
+
+        Music[0] = Resources.Load<AudioClip>("Audio/Music/0-MainEvent");
+        Music[1] = Resources.Load<AudioClip>("Audio/Music/01-Block_by_block");
+        Music[2] = Resources.Load<AudioClip>("Audio/Music/02-Blocked");
     }
 
     public AudioClip GetSound(sound soundName)
@@ -88,7 +125,12 @@ public class SoundsAssets
     {
         switch (song)
         {
-
+            case music.MainEvent:
+                return Music[0];
+            case music.Block_by_block:
+                return Music[1];
+            case music.Blocked:
+                return Music[2];
         }
         return null;
     }
