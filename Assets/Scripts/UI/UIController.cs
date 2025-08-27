@@ -8,6 +8,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Canvas[] UIs = new Canvas[9];
     private TMP_Text TimeText;
+    private GameObject TutorialText;
     public bool[] Stars;
     public Image[] StarsIMG = new Image[3];
     public Button[,] CampaignButtons = new Button[12,3];
@@ -21,6 +22,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         TimeText = GameObject.Find("TimeText").GetComponent<TMP_Text>();
+        TutorialText = GameObject.Find("TutorialText");
 
         UIs[0] = GameObject.Find("MainMenu").GetComponent<Canvas>();
         UIs[1] = GameObject.Find("SettingsMenu").GetComponent<Canvas>();
@@ -198,6 +200,7 @@ public class UIController : MonoBehaviour
             }
         }
         Time.timeScale = 1;
+        TutorialText.SetActive(false);
         ChangeMenu(8);
         StartCoroutine(StarsAnim(n));
     }
@@ -227,6 +230,12 @@ public class UIController : MonoBehaviour
             GameObject.Find("EndStar" + (i + 1)).GetComponent<Image>().color = Color.white;
             GameObject.Find("EndStar" + (i + 1)).GetComponent<Animator>().Play("Anim");
         }
+    }
+
+    public void SetTutorialText(string text)
+    {
+        TutorialText.SetActive(true);
+        TutorialText.GetComponent<TMP_Text>().text = text;
     }
 
     //SETTINGS

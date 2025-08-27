@@ -8,6 +8,7 @@ public static class SaveController
     public static TowerData towerData;
     public static List<TowerData> leveleMateuszka = new List<TowerData>();
     private const string towerPath = "Tower/TowerData";
+    public static string currentCampaign = "BaseCampaign";
     public static Levels levels = new Levels();
 
 
@@ -41,7 +42,7 @@ public static class SaveController
 
     public static void SaveLevelStars()
     {
-        var path = Application.persistentDataPath + "/LevelStars.json";
+        var path = Application.persistentDataPath + "/" + currentCampaign + "Stars.json";
 
         string saveLevels = JsonUtility.ToJson(levels);
         File.WriteAllText(path, saveLevels);
@@ -50,7 +51,7 @@ public static class SaveController
 
     public static void LoadLevelStars()
     {
-        var path = Application.persistentDataPath + "/LevelStars.json";
+        var path = Application.persistentDataPath + "/" + currentCampaign + "Stars.json";
         if (File.Exists(path))
         {
             Debug.Log(path);

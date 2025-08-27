@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -81,19 +82,37 @@ public class TowerController : MonoBehaviour
         }
     }
 
+    public bool tutorialOn = false;
+    public TutorialController tutorialController;
+
     void Start()
     {
         _controller = GameObject.Find("UI").GetComponent<UIController>();
         Debug.Log("Pre load");
         SaveController.LoadLevel();
         Debug.Log("Post load");
-
+        tutorialController = new TutorialController(_controller);
 
         //LoadTower();
         //GenerateTower();
     }
 
     // Update is called once per frame
+
+    void HighlightTutorialBlock()
+    {
+        var blockIndex = tutorialController.GetCurrentTutorialBlock();
+
+        if (blockIndex == -1)
+        {
+            return;
+        }
+
+        var block = changedTower[blockIndex];
+
+        var tempBlockMeshRenderer = block.transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+        tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[3] };
+    }
     void FixedUpdate()
     {
         if (animations.Count > 0)
@@ -110,6 +129,11 @@ public class TowerController : MonoBehaviour
             var tempBlockMeshRenderer = block.transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
             tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material,
                     blockTemplate.transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] };
+        }
+
+        if (tutorialOn)
+        {
+            HighlightTutorialBlock();
         }
 
         if (selectedBlock > 0)
@@ -130,6 +154,7 @@ public class TowerController : MonoBehaviour
                 for (int i = selectedBlock - 1; i >= 0; i--)
                 {
                     tempBlockMeshRenderer = changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
+
                     tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[4] };
                 }
             }
@@ -205,6 +230,7 @@ public class TowerController : MonoBehaviour
 
     public void ClearTower()
     {
+        tutorialOn = false;
         foreach (var block in originalTower)
         {
             Destroy(block.gameObject);
@@ -262,6 +288,11 @@ public class TowerController : MonoBehaviour
     }
     public void Rotate(int splitPoint)
     {
+        if (CheckTutorialMoveBlock(true, rotateDown))
+        {
+            return;
+        }
+
         totalMoves++;
 
         if (splitPoint == 0)
@@ -320,6 +351,11 @@ public class TowerController : MonoBehaviour
 
     public void Reverse(int splitPoint)
     {
+        if (CheckTutorialMoveBlock(false, reverseDown))
+        {
+            return;
+        }
+
         totalMoves++;
 
         if (splitPoint == 0)
@@ -451,6 +487,23 @@ public class TowerController : MonoBehaviour
 
     }
 
+    public void StartTutorial()
+    {
+        tutorialController = new TutorialController(_controller);
+
+        tutorialController.ChangeTutorialDescription();
+
+        tutorialOn = true;
+    }
+
+    public bool CheckTutorialMoveBlock(bool rotate, bool backwards)
+    {
+        if (tutorialOn)
+        {
+            return !tutorialController.CheckMoveValidity(rotate, backwards, selectedBlock);
+        }
+        return false;
+    }
 
     public void LoadLevel(int level)
     {
@@ -460,6 +513,7 @@ public class TowerController : MonoBehaviour
 
     public void LoadTower()
     {
+        StartTutorial();
         _controller.NewGame();
 
         selectedLevel = 0;
