@@ -17677,6 +17677,7 @@ MonoBehaviour:
   - {r: 0.77254903, g: 0.73969656, b: 0.14117646, a: 0}
   materialList: []
   highlightedBlocks: 0
+  tutorialOn: 0
 --- !u!4 &1399298132
 Transform:
   m_ObjectHideFlags: 0

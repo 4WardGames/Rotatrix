@@ -20,13 +20,11 @@ public class SceneWaveGenerator : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log("ui");
         verts = mesh.vertices;
         for (int i = 0; i < verts.Length; i++)
         {
             float z = Mathf.PerlinNoise(verts[i].x+x, verts[i].y);
             verts[i] = new Vector3(verts[i].x, verts[i].y, z/5);
-            Debug.Log(verts[i].z);
         }
         mesh.vertices= verts;
         meshFilter.sharedMesh = mesh;

@@ -8,7 +8,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Canvas[] UIs = new Canvas[9];
     private TMP_Text TimeText;
-    private GameObject TutorialText;
+    public GameObject TutorialText;
     public bool[] Stars;
     public Image[] StarsIMG = new Image[3];
     public Button[,] CampaignButtons = new Button[12,3];
