@@ -11,7 +11,7 @@ public class UIController : MonoBehaviour
     public GameObject TutorialText;
     public bool[] Stars;
     public Image[] StarsIMG = new Image[3];
-    public Button[,] CampaignButtons = new Button[12,3];
+    public Button[,] CampaignButtons = new Button[12, 3];
     public int SelCampaign = 0;
     public Canvas[] Campaigns = new Canvas[3];
 
@@ -23,6 +23,7 @@ public class UIController : MonoBehaviour
     {
         TimeText = GameObject.Find("TimeText").GetComponent<TMP_Text>();
         TutorialText = GameObject.Find("TutorialText");
+        TutorialText.SetActive(false);
 
         UIs[0] = GameObject.Find("MainMenu").GetComponent<Canvas>();
         UIs[1] = GameObject.Find("SettingsMenu").GetComponent<Canvas>();
@@ -43,12 +44,12 @@ public class UIController : MonoBehaviour
 
         for (int i = 0; i < 12; i++)
         {
-            for(int j = 0; j < 3; j++)
+            for (int j = 0; j < 3; j++)
             {
-                CampaignButtons[i,j] = GameObject.Find(j+"Lv" + (i + 1)).GetComponent<Button>();
+                CampaignButtons[i, j] = GameObject.Find(j + "Lv" + (i + 1)).GetComponent<Button>();
             }
         }
-        for(int i =0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             Campaigns[i] = GameObject.Find("Cmp" + i).GetComponent<Canvas>();
             Campaigns[i].enabled = false;
@@ -99,16 +100,16 @@ public class UIController : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            for(int j = 0; j < 3; j++)
+            for (int j = 0; j < 3; j++)
             {
                 if (i < u)
                 {
-                    CampaignButtons[i,j].interactable = true;
+                    CampaignButtons[i, j].interactable = true;
                 }
 
                 else
                 {
-                    CampaignButtons[i,j].interactable = false;
+                    CampaignButtons[i, j].interactable = false;
                 }
             }
         }
@@ -133,7 +134,7 @@ public class UIController : MonoBehaviour
         {
             for (int i = 0; i < 12; i++)
             {
-                if (i+(j*12) <= stars / 2)
+                if (i + (j * 12) <= stars / 2)
                 {
                     CampaignButtons[i, j].interactable = true;
                 }

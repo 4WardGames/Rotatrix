@@ -2,12 +2,6 @@
 using System.Linq;
 namespace Assets.Scripts
 {
-    public enum Response
-    {
-        Yes = 1,
-        No = 2,
-        Maybe = 3
-    }
 
     public enum TutorialStages
     {
@@ -19,7 +13,7 @@ namespace Assets.Scripts
         public TutorialStages stages = TutorialStages.Rotation;
         private UIController _controller;
 
-        public int[] TutorialBlocks = { 1, 2, 0, 3, -1 };
+        public int[] TutorialBlocks = { 1, 2, 4, 3, -1 };
 
         public int GetCurrentTutorialBlock()
         {
@@ -27,10 +21,10 @@ namespace Assets.Scripts
         }
 
         private string[] stageDescriptions = { "Welcome to the Rotatrix tutorial." +
-                " To start begin click a block and drag it to the right to rotate the top of the tower."
-                , "Now click a block and drag it to the left to rotate the bottom of the tower."
-                , "Now click a block and drag it down to move it and the blocks above it to the bottom."
-                , "Now click a block and drag it up to move it and the blocks bellow it to the top."
+                " To start begin click the highlighted block and drag it to the right to rotate the top of the tower."
+                , "Now click the highlighted block and drag it to the left to rotate the bottom of the tower."
+                , "Now click the highlighted block and drag it down to move it and the blocks above it to the bottom."
+                , "Now click the highlighted block and drag it up to move it and the blocks bellow it to the top."
                 , "Now use the moves you've learned to match the tower to the one in the background."};
 
         public TutorialController(UIController controller)

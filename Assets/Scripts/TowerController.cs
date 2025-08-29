@@ -136,7 +136,7 @@ public class TowerController : MonoBehaviour
             HighlightTutorialBlock();
         }
 
-        if (selectedBlock > 0)
+        if (selectedBlock >= 0)
         {
             var tempBlockMeshRenderer = changedTower[selectedBlock].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
             tempBlockMeshRenderer.materials = new Material[2] { tempBlockMeshRenderer.material, materialList[4] };
@@ -417,6 +417,11 @@ public class TowerController : MonoBehaviour
         return false;
     }
 
+    public void ResetPoint()
+    {
+        selectedBlock = -1;
+    }
+
     public void GenerateTower()
     {
         _controller.NewGame();
@@ -494,6 +499,62 @@ public class TowerController : MonoBehaviour
         tutorialController.ChangeTutorialDescription();
 
         tutorialOn = true;
+
+        GenerateTutorial();
+    }
+
+    private void GenerateTutorial()
+    {
+        _controller.NewGame();
+
+        selectedLevel = 0;
+        totalMoves = 0;
+        gameTime = 0;
+
+        blockTemplate = GameObject.Instantiate(originalTemplate);
+
+        blockTemplate.transform.position = new Vector3(0, 0, -100);
+
+        originalTower = new List<GameObject>();
+
+        var materials = new List<int>() { 0, 0, 1, 1, 0, 1 };
+
+        size = materials.Count;
+
+        var modifier = (float)defaultSize / size;
+
+        blockTemplate.transform.localScale = new Vector3(blockTemplate.transform.localScale.x,
+            blockTemplate.transform.localScale.y * modifier, blockTemplate.transform.localScale.z);
+
+        for (int i = 0; i < size; i++)
+        {
+            originalTower.Add(Instantiate(blockTemplate));
+
+            var material = materials[i];
+
+            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+                = materialList[material];
+
+            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3 + 0.01f * i);
+
+            originalTower[i].transform.parent = transform;
+
+            changedTower.Add(Instantiate(blockTemplate));
+
+            changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+                = materialList[material];
+
+            changedTower[i].transform.position = new Vector3(0, i * Height, 0.01f * i);
+
+            changedTower[i].transform.parent = transform;
+
+        }
+
+        ReverseStatic(3);
+        RotateStatic(2);
+
+        minMoves = 11;
+        minGameTime = minMoves * 7;
     }
 
     public bool CheckTutorialMoveBlock(bool rotate, bool backwards)
@@ -513,7 +574,6 @@ public class TowerController : MonoBehaviour
 
     public void LoadTower()
     {
-        StartTutorial();
         _controller.NewGame();
 
         selectedLevel = 0;
@@ -538,15 +598,8 @@ public class TowerController : MonoBehaviour
         {
             originalTower.Add(Instantiate(blockTemplate));
 
-            //originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
-            //    = materialList[loadedTower.colors[i]];
-
-            var originalBlock = originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>();
-
-            originalBlock.materials = new Material[2] { materialList[loadedTower.colors[i]], materialList[loadedTower.colors[i]] };
-            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] = materialList[loadedTower.colors[i]];
-            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials[1] = materialList[loadedTower.colors[i]];
-            Debug.Log(originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().materials);
+            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+                = materialList[loadedTower.colors[i]];
             originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3);
 
             originalTower[i].transform.parent = transform;

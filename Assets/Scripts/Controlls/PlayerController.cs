@@ -110,6 +110,7 @@ public class PlayerController : MonoBehaviour
             }
             touchPos = Vector2.zero;
             originalTouchPos = Vector2.zero;
+            TowerController.ResetPoint();
         }
     }
 
