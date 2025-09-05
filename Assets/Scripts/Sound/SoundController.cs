@@ -30,6 +30,16 @@ public class SoundController : MonoBehaviour
         this.transform.GetComponent<AudioSource>().PlayOneShot(Assets.GetSound(sound));
     }
 
+    public void PlaySplit()
+    {
+        PlaySound(SoundsAssets.sound.sndSplit);
+    }
+
+    public void PlayCombine()
+    {
+        PlaySound(SoundsAssets.sound.sndCombine);
+    }
+
     public void ButtonClickSound()
     {
         this.transform.GetComponent<AudioSource>().PlayOneShot(Assets.GetSound(SoundsAssets.sound.sndBtn));
