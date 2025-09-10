@@ -116,6 +116,28 @@ public class UIController : MonoBehaviour
 
     }
 
+    public void CheckNextLevelButton(int currentLevel)
+    {
+        var stars = 0;
+        var levelStars = SaveController.levels;
+
+        foreach (var level in levelStars.stars)
+        {
+            stars += level;
+        }
+
+        if ((currentLevel + 1) * 2 <= stars)
+        {
+            GameObject.Find("NextLvl").GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            GameObject.Find("NextLvl").GetComponent<Button>().interactable = false;
+        }
+
+
+    }
+
     public void UpdatePlayerStars(int stars)
     {
         SetLevelButtons();

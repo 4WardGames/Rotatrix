@@ -5,6 +5,7 @@ using UnityEngine;
 public class TowerController : MonoBehaviour
 {
     private UIController _controller;
+    private SoundController _soundController;
 
     private GameObject blockTemplate;
     [SerializeField]
@@ -45,7 +46,7 @@ public class TowerController : MonoBehaviour
 
     private int currentStars = 3;
 
-    private int minMoves = 0;
+    private int minMoves = 1;
 
     private int currentLevel = 0;
 
@@ -88,6 +89,7 @@ public class TowerController : MonoBehaviour
     void Start()
     {
         _controller = GameObject.Find("UI").GetComponent<UIController>();
+        _soundController = GameObject.Find("SoundController (1)").GetComponent<SoundController>();
         Debug.Log("Pre load");
         SaveController.LoadLevel();
         Debug.Log("Post load");
@@ -120,6 +122,7 @@ public class TowerController : MonoBehaviour
             if (animations[0].Animate(500))
             {
                 animations.Remove(animations[0]);
+                _soundController.PlayCombine();
                 //Reverse(1);
             }
         }
@@ -210,6 +213,8 @@ public class TowerController : MonoBehaviour
         SaveController.UpdateLevelStars(currentLevel, currentStars);
         _controller.UpdatePlayerStars(currentStars);
 
+        _controller.CheckNextLevelButton(currentLevel);
+
         _controller.EndGame();
 
         _controller.ChangeMenu(8);
@@ -293,8 +298,6 @@ public class TowerController : MonoBehaviour
             return;
         }
 
-        totalMoves++;
-
         if (splitPoint == 0)
         {
             if (selectedBlock != -1 && selectedBlock != changedTower.Count)
@@ -306,6 +309,11 @@ public class TowerController : MonoBehaviour
                 return;
             }
         }
+
+        totalMoves++;
+
+        _soundController.PlaySplit();
+
         Vector3 rotationPoint;
         BlockRotation newAnimation;
         if (rotateDown)
@@ -356,8 +364,6 @@ public class TowerController : MonoBehaviour
             return;
         }
 
-        totalMoves++;
-
         if (splitPoint == 0)
         {
             if (selectedBlock != -1)
@@ -377,6 +383,11 @@ public class TowerController : MonoBehaviour
                 return;
             }
         }
+
+        totalMoves++;
+
+        _soundController.PlaySplit();
+
         Vector3 reversalPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint * Height + center, 0);
         BlockReversal newAnimation = new BlockReversal(reversalPoint, splitPoint, changedTower.Count, widthMultiplier, Height);
 
@@ -483,10 +494,12 @@ public class TowerController : MonoBehaviour
             if (reverse == 1)
             {
                 ReverseStatic(split);
+                Debug.Log("Reverse: " + split);
             }
             else
             {
                 RotateStatic(split);
+                Debug.Log("Rotate: " + split);
             }
         }
 
@@ -572,6 +585,35 @@ public class TowerController : MonoBehaviour
         LoadTower();
     }
 
+    public void NextLevel()
+    {
+        if (selectedLevel != -1)
+        {
+            currentLevel++;
+            LoadTower();
+        }
+        else
+        {
+            GenerateTower();
+        }
+    }
+
+    public void PreviousLevel()
+    {
+        if (selectedLevel != -1)
+        {
+            if (currentLevel > 0)
+            {
+                currentLevel--;
+            }
+            LoadTower();
+        }
+        else
+        {
+            GenerateTower();
+        }
+    }
+
     public void LoadTower()
     {
         _controller.NewGame();
@@ -585,6 +627,12 @@ public class TowerController : MonoBehaviour
         blockTemplate.transform.position = new Vector3(0, 0, -100);
 
         originalTower = new List<GameObject>();
+
+        if (SaveController.leveleMateuszka.Count <= currentLevel)
+        {
+            currentLevel = SaveController.leveleMateuszka.Count - 1;
+        }
+
         var loadedTower = SaveController.leveleMateuszka[currentLevel];
 
         size = loadedTower.colors.Count;
