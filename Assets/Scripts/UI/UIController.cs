@@ -15,15 +15,29 @@ public class UIController : MonoBehaviour
     public int SelCampaign = 0;
     public Canvas[] Campaigns = new Canvas[3];
 
+    //UI Moves
+    public TMP_Text MinimumMoves;
+    public TMP_Text MinimumTime;
+
     public bool StarWarn;
     public float ClockCounter;
+
+    GameObject camera;
+    GameObject MenuParticles;
+
+    BackgroundController Background;
 
     // Start is called before the first frame update
     void Start()
     {
+        MenuParticles = GameObject.Find("MenuParticles");
+        camera = GameObject.Find("Main Camera");
         TimeText = GameObject.Find("TimeText").GetComponent<TMP_Text>();
         TutorialText = GameObject.Find("TutorialText");
         TutorialText.SetActive(false);
+
+        MinimumMoves = GameObject.Find("MiminumMovesTxt").GetComponent<TMP_Text>();
+        MinimumTime = GameObject.Find("MinimumTimeTxt").GetComponent<TMP_Text>();
 
         UIs[0] = GameObject.Find("MainMenu").GetComponent<Canvas>();
         UIs[1] = GameObject.Find("SettingsMenu").GetComponent<Canvas>();
@@ -35,18 +49,20 @@ public class UIController : MonoBehaviour
         UIs[7] = GameObject.Find("ChallengeMenu").GetComponent<Canvas>();
         UIs[8] = GameObject.Find("GameOverMenu").GetComponent<Canvas>();
         Stars = new bool[3] { true, true, true };
-        ChangeMenu(0);
-
 
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
         StarsIMG[1] = GameObject.Find("Star2").GetComponent<Image>();
         StarsIMG[2] = GameObject.Find("Star3").GetComponent<Image>();
+        ChangeMenu(0);
 
         for (int i = 0; i < 12; i++)
         {
             for (int j = 0; j < 3; j++)
             {
-                CampaignButtons[i, j] = GameObject.Find(j + "Lv" + (i + 1)).GetComponent<Button>();
+                if(GameObject.Find(j + "Lv" + (i + 1)) != null)
+                {
+                    CampaignButtons[i, j] = GameObject.Find(j + "Lv" + (i + 1)).GetComponent<Button>();
+                }
             }
         }
         for (int i = 0; i < 3; i++)
@@ -59,6 +75,7 @@ public class UIController : MonoBehaviour
         SetLevelButtons();
         UpdatePlayerStars(0);
         SetStars(1);
+        Background = GameObject.Find("BackgroundScenes").GetComponent<BackgroundController>();
     }
 
     public void NewLevel()
@@ -73,13 +90,24 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        if (id == 3 || id == 8)
+        if (id == 3 || id == 8||id==0)
         {
             Time.timeScale = 1.0f;
         }
         else
         {
             Time.timeScale = 0.0f;
+        }
+
+        if (id == 0)
+        {
+            camera.transform.rotation = Quaternion.Euler(-40, 180, 0);
+            MenuParticles.SetActive(true);
+        }
+        else
+        {
+            camera.transform.rotation = Quaternion.Euler(0, 0, 0);
+            MenuParticles.SetActive(false);
         }
 
         for (int i = 0; i < UIs.Length; i++)
@@ -158,12 +186,18 @@ public class UIController : MonoBehaviour
             {
                 if (i + (j * 12) <= stars / 2)
                 {
-                    CampaignButtons[i, j].interactable = true;
+                    if(CampaignButtons[i, j] != null)
+                    {
+                        CampaignButtons[i, j].interactable = true;
+                    }
                 }
 
                 else
                 {
-                    CampaignButtons[i, j].interactable = false;
+                    if (CampaignButtons[i, j] != null)
+                    {
+                        CampaignButtons[i, j].interactable = false;
+                    }
                 }
             }
         }
@@ -197,6 +231,12 @@ public class UIController : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void LoseStarInfo(string moves, string time)
+    {
+        MinimumMoves.text = moves;
+        MinimumTime.text = time;
     }
 
     public void NewGame()
@@ -242,6 +282,19 @@ public class UIController : MonoBehaviour
             SelCampaign = 2;
         }
         Campaigns[SelCampaign].enabled = true;
+        Background.ChangeBackgroundScene(SelCampaign);
+    }
+
+    public void UpdateLevelStars(int campaign, int level, int stars)
+    {
+        if (GameObject.Find(campaign + "Lv" + level) != null)
+        {
+            for (int i = 0; i < stars; i++)
+            {
+                GameObject.Find(campaign + "Lv" + level).transform.Find("Stars").transform.Find("CS" + (i + 1)).GetComponent<Image>().enabled = true;
+                
+            }
+        }
     }
 
     IEnumerator StarsAnim(int n)
