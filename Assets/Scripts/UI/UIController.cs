@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    private Canvas[] UIs = new Canvas[9];
+    private Canvas[] UIs = new Canvas[10];
     private TMP_Text TimeText;
     public GameObject TutorialText;
     public bool[] Stars;
@@ -48,6 +48,7 @@ public class UIController : MonoBehaviour
         UIs[6] = GameObject.Find("CampaignMenu").GetComponent<Canvas>();
         UIs[7] = GameObject.Find("ChallengeMenu").GetComponent<Canvas>();
         UIs[8] = GameObject.Find("GameOverMenu").GetComponent<Canvas>();
+        UIs[9] = GameObject.Find("QuickGameSubMenu").GetComponent<Canvas>();
         Stars = new bool[3] { true, true, true };
 
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
