@@ -86,6 +86,8 @@ public class TowerController : MonoBehaviour
     public bool tutorialOn = false;
     public TutorialController tutorialController;
 
+    public int randomTransformationCount = 0;
+
     void Start()
     {
         _controller = GameObject.Find("UI").GetComponent<UIController>();
@@ -433,6 +435,28 @@ public class TowerController : MonoBehaviour
         selectedBlock = -1;
     }
 
+
+    public void QuickGame(int difficulty)
+    {
+        switch (difficulty)
+        {
+            case 0:
+                size = 5;
+                randomTransformationCount = 3;
+                break;
+            case 1:
+                size = 7;
+                randomTransformationCount = 6;
+                break;
+            case 2:
+                size = 10;
+                randomTransformationCount = 10;
+                break;
+        }
+
+        GenerateTower();
+    }
+
     public void GenerateTower()
     {
         _controller.NewGame();
@@ -445,12 +469,11 @@ public class TowerController : MonoBehaviour
 
         blockTemplate.transform.position = new Vector3(0, 0, -100);
 
-        float modifier = (float)defaultSize / 7.0f;
+        float modifier = (float)defaultSize / size;
 
         blockTemplate.transform.localScale = new Vector3(blockTemplate.transform.localScale.x,
             blockTemplate.transform.localScale.y * modifier, blockTemplate.transform.localScale.z);
 
-        size = 7;
 
         for (int i = 0; i < size; i++)
         {
@@ -481,10 +504,12 @@ public class TowerController : MonoBehaviour
 
     public void RandomizeTower()
     {
-        var timesRandomized = Random.Range(4, 8);
+        var timesRandomized = Random.Range(randomTransformationCount - 1, randomTransformationCount + 2);
 
         minMoves = timesRandomized;
-        minGameTime = minMoves * 7;
+        minGameTime = minMoves * size;
+
+        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
 
         for (int i = 0; i < timesRandomized; i++)
         {
@@ -568,6 +593,7 @@ public class TowerController : MonoBehaviour
 
         minMoves = 11;
         minGameTime = minMoves * 7;
+        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
     }
 
     public bool CheckTutorialMoveBlock(bool rotate, bool backwards)
@@ -686,6 +712,8 @@ public class TowerController : MonoBehaviour
 
         minMoves = loadedTower.transforms.Count;
         minGameTime = minMoves * 7;
+
+        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
     }
 
     public void RestartLevel()
