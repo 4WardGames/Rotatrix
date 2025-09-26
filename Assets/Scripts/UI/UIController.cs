@@ -236,8 +236,8 @@ public class UIController : MonoBehaviour
 
     public void LoseStarInfo(string moves, string time)
     {
-        MinimumMoves.text = moves;
-        MinimumTime.text = time;
+        MinimumMoves.text = "Solve in "+moves+" moves";
+        MinimumTime.text = "Solve in " + time + " secounds";
     }
 
     public void NewGame()
