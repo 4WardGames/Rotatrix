@@ -32,7 +32,9 @@ public static class SaveController
 
     public static void LoadLevel()
     {
-        var otherData = Resources.LoadAll<TextAsset>("Tower/BaseCampaign");
+        var otherData = Resources.LoadAll<TextAsset>("Tower/" + currentCampaign);
+
+        leveleMateuszka = new List<TowerData>();
 
         foreach (var towerText in otherData)
         {
@@ -62,6 +64,10 @@ public static class SaveController
             levels = data;
 
             Debug.Log(loadedLevels);
+        }
+        else
+        {
+            levels = new Levels();
         }
     }
 

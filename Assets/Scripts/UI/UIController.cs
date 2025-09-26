@@ -14,6 +14,7 @@ public class UIController : MonoBehaviour
     public Button[,] CampaignButtons = new Button[12, 3];
     public int SelCampaign = 0;
     public Canvas[] Campaigns = new Canvas[3];
+    private string[] CampaignNames = { "BaseCampaign", "1-BeachBlocked", "ExtremeCampaign" };
 
     //UI Moves
     public TMP_Text MinimumMoves;
@@ -60,7 +61,7 @@ public class UIController : MonoBehaviour
         {
             for (int j = 0; j < 3; j++)
             {
-                if(GameObject.Find(j + "Lv" + (i + 1)) != null)
+                if (GameObject.Find(j + "Lv" + (i + 1)) != null)
                 {
                     CampaignButtons[i, j] = GameObject.Find(j + "Lv" + (i + 1)).GetComponent<Button>();
                 }
@@ -91,7 +92,7 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        if (id == 3 || id == 8||id==0)
+        if (id == 3 || id == 8 || id == 0)
         {
             Time.timeScale = 1.0f;
         }
@@ -185,9 +186,9 @@ public class UIController : MonoBehaviour
         {
             for (int i = 0; i < 12; i++)
             {
-                if (i + (j * 12) <= stars / 2)
+                if (i <= stars / 2 && j == SelCampaign)
                 {
-                    if(CampaignButtons[i, j] != null)
+                    if (CampaignButtons[i, j] != null)
                     {
                         CampaignButtons[i, j].interactable = true;
                     }
@@ -236,7 +237,7 @@ public class UIController : MonoBehaviour
 
     public void LoseStarInfo(string moves, string time)
     {
-        MinimumMoves.text = "Solve in "+moves+" moves";
+        MinimumMoves.text = "Solve in " + moves + " moves";
         MinimumTime.text = "Solve in " + time + " secounds";
     }
 
@@ -282,6 +283,13 @@ public class UIController : MonoBehaviour
         {
             SelCampaign = 2;
         }
+
+        SaveController.currentCampaign = CampaignNames[SelCampaign];
+        SaveController.LoadLevel();
+        SaveController.LoadLevelStars();
+
+        SetLevelButtons();
+
         Campaigns[SelCampaign].enabled = true;
         Background.ChangeBackgroundScene(SelCampaign);
     }
@@ -293,7 +301,7 @@ public class UIController : MonoBehaviour
             for (int i = 0; i < stars; i++)
             {
                 GameObject.Find(campaign + "Lv" + level).transform.Find("Stars").transform.Find("CS" + (i + 1)).GetComponent<Image>().enabled = true;
-                
+
             }
         }
     }
