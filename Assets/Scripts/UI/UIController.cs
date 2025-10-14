@@ -178,10 +178,14 @@ public class UIController : MonoBehaviour
         var stars = 0;
         var levelStars = SaveController.levels;
 
+        int counter = 1;
         foreach (var level in levelStars.stars)
         {
             stars += level;
+            UpdateLevelStars(SelCampaign, counter, level);
+            counter++;
         }
+
         for (int j = 0; j < 3; j++)
         {
             for (int i = 0; i < 12; i++)
@@ -192,6 +196,7 @@ public class UIController : MonoBehaviour
                     {
                         CampaignButtons[i, j].interactable = true;
                     }
+
                 }
 
                 else
