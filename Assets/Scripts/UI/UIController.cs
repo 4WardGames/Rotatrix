@@ -195,6 +195,7 @@ public class UIController : MonoBehaviour
                     if (CampaignButtons[i, j] != null)
                     {
                         CampaignButtons[i, j].interactable = true;
+                        CampaignButtons[i, j].transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = (i+1).ToString();
                     }
 
                 }
@@ -204,6 +205,8 @@ public class UIController : MonoBehaviour
                     if (CampaignButtons[i, j] != null)
                     {
                         CampaignButtons[i, j].interactable = false;
+                        CampaignButtons[i, j].transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = (i + 1).ToString() + "\n" + stars + "/" + 2 * i;
+
                     }
                 }
             }
