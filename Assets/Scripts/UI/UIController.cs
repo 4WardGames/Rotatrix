@@ -13,8 +13,8 @@ public class UIController : MonoBehaviour
     public Image[] StarsIMG = new Image[3];
     public Button[,] CampaignButtons = new Button[12, 3];
     public int SelCampaign = 0;
-    public Canvas[] Campaigns = new Canvas[3];
-    private string[] CampaignNames = { "BaseCampaign", "1-BeachBlocked", "ExtremeCampaign" };
+    public Canvas[] Campaigns = new Canvas[4];
+    private string[] CampaignNames = { "BaseCampaign", "1-BeachBlocked", "ExtremeCampaign", "RoadBlock" };
 
     //UI Moves
     public TMP_Text MinimumMoves;
@@ -67,7 +67,7 @@ public class UIController : MonoBehaviour
                 }
             }
         }
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
             Campaigns[i] = GameObject.Find("Cmp" + i).GetComponent<Canvas>();
             Campaigns[i].enabled = false;
@@ -287,9 +287,9 @@ public class UIController : MonoBehaviour
         {
             SelCampaign = 0;
         }
-        else if (SelCampaign > 2)
+        else if (SelCampaign > 3)
         {
-            SelCampaign = 2;
+            SelCampaign = 3;
         }
 
         SaveController.currentCampaign = CampaignNames[SelCampaign];

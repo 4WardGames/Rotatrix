@@ -6,7 +6,7 @@ using UnityEngine.Video;
 public class BackgroundController : MonoBehaviour
 {
     public VideoClip[] Backgrounds=new VideoClip[2];
-    public GameObject[] backScenes = new GameObject[3];
+    public GameObject[] backScenes = new GameObject[4];
 
     public void ChangeBackground(int i)
     {
@@ -18,6 +18,7 @@ public class BackgroundController : MonoBehaviour
         backScenes[0] = GameObject.Find("00FlexTheBlock");
         backScenes[1] = GameObject.Find("01BlockTheBeach"); 
         backScenes[2] = GameObject.Find("02BlockFromHell"); 
+        backScenes[3] = GameObject.Find("03RoadBlock"); 
         ChangeBackgroundScene(0);
     }
 
