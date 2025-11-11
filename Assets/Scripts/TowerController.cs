@@ -232,7 +232,7 @@ public class TowerController : MonoBehaviour
             }
         }
 
-        endOfTheGameTimer = 3.0f;
+        endOfTheGameTimer = 1.0f;
     }
 
     public void ClearTower()
@@ -632,6 +632,10 @@ public class TowerController : MonoBehaviour
             {
                 currentLevel--;
             }
+            else
+            {
+                _controller.ChangeCampaign(-1);
+            }
             LoadTower();
         }
         else
@@ -656,7 +660,8 @@ public class TowerController : MonoBehaviour
 
         if (SaveController.leveleMateuszka.Count <= currentLevel)
         {
-            currentLevel = SaveController.leveleMateuszka.Count - 1;
+            _controller.ChangeCampaign(1);
+            currentLevel = 0;
         }
 
         var loadedTower = SaveController.leveleMateuszka[currentLevel];

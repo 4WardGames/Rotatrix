@@ -11,10 +11,10 @@ public class UIController : MonoBehaviour
     public GameObject TutorialText;
     public bool[] Stars;
     public Image[] StarsIMG = new Image[3];
-    public Button[,] CampaignButtons = new Button[12, 3];
+    public Button[,] CampaignButtons = new Button[12, 4];
     public int SelCampaign = 0;
     public Canvas[] Campaigns = new Canvas[4];
-    private string[] CampaignNames = { "BaseCampaign", "1-BeachBlocked", "ExtremeCampaign", "RoadBlock" };
+    private string[] CampaignNames = { "BaseCampaign", "1-BeachBlocked", "ExtremeCampaign", "3-RoadBlock" };
 
     //UI Moves
     public TMP_Text MinimumMoves;
@@ -59,7 +59,7 @@ public class UIController : MonoBehaviour
 
         for (int i = 0; i < 12; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < 4; j++)
             {
                 if (GameObject.Find(j + "Lv" + (i + 1)) != null)
                 {
@@ -130,7 +130,7 @@ public class UIController : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < 4; j++)
             {
                 if (i < u)
                 {
@@ -186,7 +186,7 @@ public class UIController : MonoBehaviour
             counter++;
         }
 
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 4; j++)
         {
             for (int i = 0; i < 12; i++)
             {
@@ -195,7 +195,7 @@ public class UIController : MonoBehaviour
                     if (CampaignButtons[i, j] != null)
                     {
                         CampaignButtons[i, j].interactable = true;
-                        CampaignButtons[i, j].transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = (i+1).ToString();
+                        CampaignButtons[i, j].transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = (i + 1).ToString();
                     }
 
                 }

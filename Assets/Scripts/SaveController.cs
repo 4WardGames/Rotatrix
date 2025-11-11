@@ -38,7 +38,9 @@ public static class SaveController
 
         foreach (var towerText in otherData)
         {
+            Debug.Log(towerText.ToString());
             leveleMateuszka.Add(JsonUtility.FromJson<TowerData>(towerText.ToString()));
+            Debug.Log(leveleMateuszka.Count.ToString());
         }
     }
 
