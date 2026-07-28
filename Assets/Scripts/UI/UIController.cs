@@ -55,7 +55,10 @@ public class UIController : MonoBehaviour
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
         StarsIMG[1] = GameObject.Find("Star2").GetComponent<Image>();
         StarsIMG[2] = GameObject.Find("Star3").GetComponent<Image>();
+        ScaleUI();
         ChangeMenu(0);
+
+
 
         for (int i = 0; i < 12; i++)
         {
@@ -78,6 +81,18 @@ public class UIController : MonoBehaviour
         UpdatePlayerStars(0);
         SetStars(1);
         Background = GameObject.Find("BackgroundScenes").GetComponent<BackgroundController>();
+
+        //---temp
+        Debug.Log(Screen.currentResolution.ToString());
+    }
+
+    void ScaleUI()
+    {
+        Vector2 resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+
+        UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localScale = new Vector2(resolution.x/1080, resolution.x / 1080);
+        UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y/2);
+
     }
 
     public void NewLevel()
