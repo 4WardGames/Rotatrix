@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
     //UI Moves
     public TMP_Text MinimumMoves;
     public TMP_Text MinimumTime;
+    public TMP_Text BestScore;
 
     public bool StarWarn;
     public float ClockCounter;
@@ -39,6 +40,7 @@ public class UIController : MonoBehaviour
 
         MinimumMoves = GameObject.Find("MiminumMovesTxt").GetComponent<TMP_Text>();
         MinimumTime = GameObject.Find("MinimumTimeTxt").GetComponent<TMP_Text>();
+        BestScore = GameObject.Find("BestScoreTxt").GetComponent<TMP_Text>();
 
         UIs[0] = GameObject.Find("MainMenu").GetComponent<Canvas>();
         UIs[1] = GameObject.Find("SettingsMenu").GetComponent<Canvas>();
@@ -90,8 +92,8 @@ public class UIController : MonoBehaviour
     {
         Vector2 resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
 
-        UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localScale = new Vector2(resolution.x/1080, resolution.x / 1080);
-        UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y/2);
+        UIs[3].GetComponent<RectTransform>().sizeDelta = new Vector2(resolution.x, resolution.y);
+        //UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y/2);
 
     }
 
