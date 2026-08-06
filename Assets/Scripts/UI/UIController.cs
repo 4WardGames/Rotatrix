@@ -91,9 +91,22 @@ public class UIController : MonoBehaviour
     void ScaleUI()
     {
         Vector2 resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y / 2-(150*resolution.y/1920));
+        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
 
-        UIs[3].GetComponent<RectTransform>().sizeDelta = new Vector2(resolution.x, resolution.y);
-        //UIs[3].transform.GetChild(0).GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y/2);
+        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localPosition = new Vector2(0, -resolution.y/2+150*resolution.y/1920);
+        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+
+        UIs[0].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[5].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[1].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[2].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[4].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[9].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[7].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[6].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+
+        
 
     }
 
@@ -229,6 +242,14 @@ public class UIController : MonoBehaviour
             }
         }
         GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text = stars.ToString();
+        if (SelCampaign != 0)
+        {
+            GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text += "/36";
+        }
+        else
+        {
+            GameObject.Find("StarCountTxt").GetComponent<TMP_Text>().text += "/18";
+        }
     }
 
     public void StarWarning()
