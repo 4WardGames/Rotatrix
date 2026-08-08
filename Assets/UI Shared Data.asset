@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UI
+  m_TableCollectionNameGuidString: 336653860a828c34c822a8fcfebe3471
+  m_Entries:
+  - m_Id: 34196434944
+    m_Key: MainMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 393522458624
+    m_Key: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263184461824
+    m_Key: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360500703232
+    m_Key: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 323590828032
+    m_Key: Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395773779128320
+    m_Key: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396069347536896
+    m_Key: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396236792541184
+    m_Key: UI Scale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396372763488256
+    m_Key: Music volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396388940918784
+    m_Key: Sounds volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396863622885376
+    m_Key: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396952948977664
+    m_Key: Restart level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397230926475264
+    m_Key: Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397269451157504
+    m_Key: QuickGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397320323870720
+    m_Key: Campaign
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397357367963648
+    m_Key: Challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397675346538496
+    m_Key: PlayMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397861716242432
+    m_Key: QuickGameMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397991378956288
+    m_Key: Easy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398019841503232
+    m_Key: Medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398049230991360
+    m_Key: Hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398101584293888
+    m_Key: Insane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398602904285184
+    m_Key: ChallengeMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398654850740224
+    m_Key: Chall1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398673985155072
+    m_Key: Chall2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398683246178304
+    m_Key: Chall3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398692637224960
+    m_Key: Chall4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 399594962038784
+    m_Key: LevelComplete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400469071769600
+    m_Key: PrevLvl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400536491012096
+    m_Key: NextLvl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400963727011840
+    m_Key: CampaignMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402581751083008
+    m_Key: Cmp0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402652412522496
+    m_Key: Cmp1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402776698138624
+    m_Key: Cmp2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402869186736128
+    m_Key: Cmp3
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 620943864762466332
+  references:
+    version: 2
+    RefIds:
+    - rid: 620943864762466332
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1786106918452

@@ -1,6 +1,9 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.Localization.Editor;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -57,7 +60,7 @@ public class UIController : MonoBehaviour
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
         StarsIMG[1] = GameObject.Find("Star2").GetComponent<Image>();
         StarsIMG[2] = GameObject.Find("Star3").GetComponent<Image>();
-        ScaleUI();
+        ScaleUI(2);
         ChangeMenu(0);
 
 
@@ -88,27 +91,31 @@ public class UIController : MonoBehaviour
         Debug.Log(Screen.currentResolution.ToString());
     }
 
-    void ScaleUI()
+    public void ScaleUI(int scaleFactor)
     {
+        float _scale = 0.8f + (float)scaleFactor / 10;
+
         Vector2 resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
-        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localPosition = new Vector2(0, resolution.y / 2-(150*resolution.y/1920));
-        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localPosition = new Vector2(0, _scale*resolution.y / 2-(150* _scale * resolution.y/1920));
+        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
-        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localPosition = new Vector2(0, -resolution.y/2+150*resolution.y/1920);
-        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localPosition = new Vector2(0, -_scale * resolution.y/2+150* _scale * resolution.y/1920);
+        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
-        UIs[0].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[5].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[1].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[2].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[4].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[9].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[7].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
-        UIs[6].transform.GetComponent<RectTransform>().localScale = new Vector2(resolution.x / 1080, resolution.x / 1080);
+        UIs[0].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[5].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[1].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[2].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[4].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[9].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[7].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[6].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
+        UIs[8].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
         
 
     }
+
 
     public void NewLevel()
     {
@@ -283,8 +290,18 @@ public class UIController : MonoBehaviour
 
     public void LoseStarInfo(string moves, string time)
     {
-        MinimumMoves.text = "Solve in " + moves + " moves";
-        MinimumTime.text = "Solve in " + time + " secounds";
+        Debug.Log(LocalizationSettings.SelectedLocale.name);
+        switch (LocalizationSettings.SelectedLocale.name)
+        {
+            default:
+                MinimumMoves.text = "Solve in " + moves + " moves";
+                MinimumTime.text = "Solve in " + time + " seconds";
+                break;
+            case "Polish (pl)":
+                MinimumMoves.text = "U³ó¿ w " + moves + " ruchach";
+                MinimumTime.text = "U³ó¿ w " + time + " sekund";
+                break;
+        }
     }
 
     public void NewGame()
@@ -370,9 +387,10 @@ public class UIController : MonoBehaviour
     }
 
     //SETTINGS
+
     public void ChangeLanguage(int id)
     {
-        //Empty
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[id];
     }
 
     public void ChangeMusicVolume(float volume)
