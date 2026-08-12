@@ -88,7 +88,7 @@ public class UIController : MonoBehaviour
         Background = GameObject.Find("BackgroundScenes").GetComponent<BackgroundController>();
 
         //---temp
-        Debug.Log(Screen.currentResolution.ToString());
+        ChangeLanguage(1);
     }
 
     public void ScaleUI(int scaleFactor)
@@ -216,6 +216,7 @@ public class UIController : MonoBehaviour
         var levelStars = SaveController.levels;
 
         int counter = 1;
+        int starsToNextLvl = 0;
         foreach (var level in levelStars.stars)
         {
             stars += level;
@@ -241,6 +242,11 @@ public class UIController : MonoBehaviour
                 {
                     if (CampaignButtons[i, j] != null)
                     {
+                        if (starsToNextLvl <= 0)
+                        {
+                            starsToNextLvl = 2 * (i) - stars;
+                            GameObject.Find("StarsToNextLvlNumberTxt").GetComponent<TMP_Text>().text = starsToNextLvl.ToString();
+                        }
                         CampaignButtons[i, j].interactable = false;
                         CampaignButtons[i, j].transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = (i + 1).ToString() + "\n" + stars + "/" + 2 * i;
 
@@ -391,6 +397,15 @@ public class UIController : MonoBehaviour
     public void ChangeLanguage(int id)
     {
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[id];
+        switch (LocalizationSettings.SelectedLocale.name)
+        {
+            default:
+                GameObject.Find("StarsToNextLvlTxt").GetComponent<TMP_Text>().text = "To next level";
+                break;
+            case "Polish (pl)":
+                GameObject.Find("StarsToNextLvlTxt").GetComponent<TMP_Text>().text = "Do nast poziomu";
+                break;
+        }
     }
 
     public void ChangeMusicVolume(float volume)
