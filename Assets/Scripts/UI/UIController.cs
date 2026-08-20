@@ -31,10 +31,20 @@ public class UIController : MonoBehaviour
     GameObject MenuParticles;
 
     BackgroundController Background;
+    ShopController shopController;
+    TMP_Text shopItemTxt;
+    Image shopItemImg;
+
+    int shopCategory = 0;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        shopController = transform.Find("ShopMenu").GetComponent<ShopController>();
+        shopItemTxt = transform.Find("ShopMenu").Find("TxtBackgr").Find("CategoryTxt").GetComponent<TMP_Text>();
+        shopItemImg = transform.Find("ShopMenu").Find("ItemImage").GetComponent<Image>();
+
         MenuParticles = GameObject.Find("MenuParticles");
         camera = GameObject.Find("Main Camera");
         TimeText = GameObject.Find("TimeText").GetComponent<TMP_Text>();
@@ -416,6 +426,27 @@ public class UIController : MonoBehaviour
     public void ChangeSoundsVolume(float volume)
     {
         //Empty
+    }
+
+    //SHOP
+
+    public void ItemDelta(int _delta)
+    {
+        shopController.SettingDelta(shopCategory, _delta);
+        shopItemTxt.text = shopController.ReadItem(shopCategory).ReadName();
+    }
+
+    public void CategoryDelta(int _delta)
+    {
+        shopCategory += _delta;
+        if (shopCategory < 0)
+        {
+            shopCategory = 0;
+        }
+        else if (shopCategory > 1)
+        {
+            shopCategory = 1;
+        }
     }
 
     //Wyœwietl czas
