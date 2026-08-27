@@ -1,8 +1,8 @@
 using System.Collections;
 using TMPro;
-using UnityEditor.Localization.Editor;
+//using UnityEditor.Localization.Editor;
 using UnityEngine;
-using UnityEngine.Localization;
+//using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
@@ -106,10 +106,10 @@ public class UIController : MonoBehaviour
         float _scale = 0.8f + (float)scaleFactor / 10;
 
         Vector2 resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
-        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localPosition = new Vector2(0, _scale*resolution.y / 2-(150* _scale * resolution.y/1920));
+        UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localPosition = new Vector2(0, _scale * resolution.y / 2 - (150 * _scale * resolution.y / 1920));
         UIs[3].transform.Find("Upper").GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
-        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localPosition = new Vector2(0, -_scale * resolution.y/2+150* _scale * resolution.y/1920);
+        UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localPosition = new Vector2(0, -_scale * resolution.y / 2 + 150 * _scale * resolution.y / 1920);
         UIs[3].transform.Find("Lower").GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
         UIs[0].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
@@ -122,7 +122,7 @@ public class UIController : MonoBehaviour
         UIs[6].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
         UIs[8].transform.GetComponent<RectTransform>().localScale = new Vector2(_scale * resolution.x / 1080, _scale * resolution.x / 1080);
 
-        
+
 
     }
 

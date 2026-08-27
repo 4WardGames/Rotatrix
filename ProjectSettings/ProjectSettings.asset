@@ -142,7 +142,8 @@ PlayerSettings:
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
   bundleVersion: 2.3
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 11400000, guid: 1bbd2fa105d63034fadfa584c475d6a7, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -268,8 +269,8 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: '{dedicated}: Documents/user.keystore'
-  AndroidKeyaliasName: rotatrixkey
+  AndroidKeystoreName: '{dedicated}: Documents/rot.keystore'
+  AndroidKeyaliasName: rotatrix
   AndroidEnableArmv9SecurityFeatures: 0
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0

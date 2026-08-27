@@ -79,7 +79,7 @@ public class TowerController : MonoBehaviour
     {
         get
         {
-            return blockTemplate.transform.localScale.y;
+            return blockTemplate.transform.localScale.y + 0.01f;
         }
     }
 
@@ -88,15 +88,18 @@ public class TowerController : MonoBehaviour
 
     public int randomTransformationCount = 0;
 
+    private int addCountdown = 0;
+
     void Start()
     {
+        Application.targetFrameRate = 60;
         _controller = GameObject.Find("UI").GetComponent<UIController>();
         _soundController = GameObject.Find("SoundController (1)").GetComponent<SoundController>();
         Debug.Log("Pre load");
         SaveController.LoadLevel();
         Debug.Log("Post load");
         tutorialController = new TutorialController(_controller);
-
+        addCountdown = Random.Range(5, 8);
         //LoadTower();
         //GenerateTower();
     }
@@ -220,6 +223,8 @@ public class TowerController : MonoBehaviour
         _controller.EndGame();
 
         _controller.ChangeMenu(8);
+
+        ShowAd();
     }
     private void CheckVictory()
     {
@@ -320,7 +325,8 @@ public class TowerController : MonoBehaviour
         BlockRotation newAnimation;
         if (rotateDown)
         {
-            rotationPoint = new Vector3(widthMultiplier * Width * 0, (float)splitPoint / 2 * Height + center, 0);
+            rotationPoint = new Vector3(widthMultiplier * Width * 0, ((float)splitPoint) / 2 * Height + center, 0);
+            Debug.DrawRay(rotationPoint, Vector3.forward, Color.yellow, 100);
             newAnimation = new BlockRotation(rotationPoint, true);
 
             for (int i = 0; i <= splitPoint / 2; i++)
@@ -337,7 +343,7 @@ public class TowerController : MonoBehaviour
         {
             rotationPoint = new Vector3(widthMultiplier * Width * 0,
                 (((float)splitPoint + changedTower.Count - 1) / 2) * Height + center, 0);
-
+            Debug.DrawRay(rotationPoint, Vector3.forward, Color.yellow, 100);
             newAnimation = new BlockRotation(rotationPoint, false);
 
             for (int i = splitPoint; i < (changedTower.Count - splitPoint + 1) / 2 + splitPoint; i++)
@@ -413,9 +419,20 @@ public class TowerController : MonoBehaviour
         selectedBlock = -1;
     }
 
+    public void ShowAd()
+    {
+        addCountdown--;
+        if (addCountdown <= 0)
+        {
+            GameObject.Find("Ads").GetComponent<InterstitialAdExample>().ShowAd();
+            addCountdown = Random.Range(5, 8);
+        }
+
+    }
+
     public bool SelectPoint(Vector3 point)
     {
-        if (point.x > widthMultiplier * 0 - Width && point.x < widthMultiplier * 0 + Width)
+        if (point.x > widthMultiplier * 0 - Width * 0.5 && point.x < widthMultiplier * 0 + Width * 0.5)
         {
             for (int i = 0; i <= size; i++)
             {
