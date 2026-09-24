@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TowerController : MonoBehaviour
@@ -85,6 +86,9 @@ public class TowerController : MonoBehaviour
 
     public bool tutorialOn = false;
     public TutorialController tutorialController;
+
+    public bool creatorOn = false;
+    public CreatorController creatorController;
 
     public int randomTransformationCount = 0;
 
@@ -228,6 +232,11 @@ public class TowerController : MonoBehaviour
     }
     private void CheckVictory()
     {
+        if (creatorOn)
+        {
+            return;
+        }
+
         for (int i = 0; i < originalTower.Count; i++)
         {
             if (originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material.color
@@ -305,6 +314,7 @@ public class TowerController : MonoBehaviour
             return;
         }
 
+
         if (splitPoint == 0)
         {
             if (selectedBlock != -1 && selectedBlock != changedTower.Count)
@@ -315,6 +325,11 @@ public class TowerController : MonoBehaviour
             {
                 return;
             }
+        }
+
+        if (creatorOn)
+        {
+            creatorController.transforms.Add(new BlockTransformation { normal = rotateDown, rotate = true, splitPoint = splitPoint });
         }
 
         totalMoves++;
@@ -358,7 +373,6 @@ public class TowerController : MonoBehaviour
             }
         }
 
-
         animations.Add(newAnimation);
         CheckVictory();
 
@@ -390,6 +404,11 @@ public class TowerController : MonoBehaviour
             {
                 return;
             }
+        }
+
+        if (creatorOn)
+        {
+            creatorController.transforms.Add(new BlockTransformation { normal = reverseDown, rotate = false, splitPoint = splitPoint });
         }
 
         totalMoves++;
@@ -424,7 +443,7 @@ public class TowerController : MonoBehaviour
         addCountdown--;
         if (addCountdown <= 0)
         {
-            GameObject.Find("Ads").GetComponent<InterstitialAdExample>().ShowAd();
+            //GameObject.Find("Ads").GetComponent<InterstitialAdExample>().ShowAd();
             addCountdown = Random.Range(5, 8);
         }
 
@@ -556,6 +575,107 @@ public class TowerController : MonoBehaviour
         tutorialOn = true;
 
         GenerateTutorial();
+    }
+
+    public void StartCreator()
+    {
+        creatorController = new CreatorController();
+
+        creatorOn = true;
+
+        GenerateCreator();
+    }
+
+    public void AddCreatorBlock(int color)
+    {
+        creatorController.materials.Add(color);
+        ClearTower();
+        GenerateCreator();
+    }
+
+    public void SaveCreatedLevel()
+    {
+        var tMP_Input = GameObject.Find("SaveName").GetComponent<TMP_InputField>();
+        string inputText = tMP_Input.text;
+
+        creatorOn = false;
+
+        SaveController.SaveCreatedLevel(inputText, creatorController);
+        StartCoroutine(SaveController.UploadFile());
+        ClearTower();
+        _controller.ChangeMenu(0);
+    }
+
+    public void UploadAll()
+    {
+        StartCoroutine(SaveController.UploadAllLevels());
+    }
+
+    private void GenerateCreator()
+    {
+        _controller.NewGame();
+
+        selectedLevel = 0;
+        totalMoves = 0;
+        gameTime = 0;
+
+        blockTemplate = GameObject.Instantiate(originalTemplate);
+
+        blockTemplate.transform.position = new Vector3(0, 0, -100);
+
+        originalTower = new List<GameObject>();
+
+        var materials = creatorController.materials;
+
+        size = materials.Count;
+
+        var modifier = (float)defaultSize / size;
+
+        blockTemplate.transform.localScale = new Vector3(blockTemplate.transform.localScale.x,
+            blockTemplate.transform.localScale.y * modifier, blockTemplate.transform.localScale.z);
+
+        for (int i = 0; i < size; i++)
+        {
+            originalTower.Add(Instantiate(blockTemplate));
+
+            var material = materials[i];
+
+            originalTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+                = materialList[material];
+
+            originalTower[i].transform.position = new Vector3(-widthMultiplier * Width * 1.5f, i * Height, 3 + 0.01f * i);
+
+            originalTower[i].transform.parent = transform;
+
+            changedTower.Add(Instantiate(blockTemplate));
+
+            changedTower[i].transform.Find("TrueCenter/Cube.001").GetComponent<MeshRenderer>().material
+                = materialList[material];
+
+            changedTower[i].transform.position = new Vector3(0, i * Height, 0.01f * i);
+
+            changedTower[i].transform.parent = transform;
+
+        }
+
+        foreach (var transformation in creatorController.transforms)
+        {
+            if (transformation.rotate)
+            {
+                if (transformation.normal)
+                {
+                    RotateStatic(transformation.splitPoint);
+                }
+                else
+                {
+                    RotateDownStatic(transformation.splitPoint);
+                }
+            }
+            else
+            {
+                ReverseStatic(transformation.splitPoint);
+            }
+        }
     }
 
     private void GenerateTutorial()

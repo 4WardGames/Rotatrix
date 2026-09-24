@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public static class SaveController
 {
@@ -10,7 +12,155 @@ public static class SaveController
     private const string towerPath = "Tower/TowerData";
     public static string currentCampaign = "BaseCampaign";
     public static Levels levels = new Levels();
+    private static string levelFilePath;
+    private static string uploadUrl = "https://rotatrixlevelupload.onrender.com/api/File";
+    public static IEnumerator UploadFile()
+    {
+        // Check if file exists
+        if (!File.Exists(levelFilePath))
+        {
+            Debug.LogError("File does not exist: " + levelFilePath);
+            yield break;
+        }
 
+        // Read file bytes
+        byte[] fileData = File.ReadAllBytes(levelFilePath);
+        string fileName = Path.GetFileName(levelFilePath);
+
+        // Create form data
+        List<IMultipartFormSection> formData = new List<IMultipartFormSection>
+        {
+            new MultipartFormFileSection("file", fileData, fileName, "application/json")
+        };
+
+        // Create the request
+        using (UnityWebRequest www = UnityWebRequest.Post(uploadUrl, formData))
+        {
+            // Set timeout (optional)
+            www.timeout = 30;
+
+            // Send the request
+            yield return www.SendWebRequest();
+
+            // Check for errors
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("File uploaded successfully!");
+                Debug.Log("Response: " + www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError("Upload failed: " + www.error);
+                Debug.LogError("Response Code: " + www.responseCode);
+                Debug.LogError("Response: " + www.downloadHandler.text);
+            }
+        }
+    }
+    public static IEnumerator UploadAllLevels()
+    {
+
+        string[] fileEntries = Directory.GetFiles(Application.persistentDataPath + "/SavedLevels/");
+        List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
+        foreach (string file in fileEntries)
+        {
+
+            // Check if file exists
+            if (!File.Exists(file))
+            {
+                Debug.LogError("File does not exist: " + file);
+                yield break;
+            }
+
+            // Read file bytes
+            byte[] fileData = File.ReadAllBytes(file);
+            string fileName = Path.GetFileName(file);
+
+            // Create form data
+            formData.Add(new MultipartFormFileSection("file", fileData, fileName, "application/json"));
+        }
+        // Create the request
+        using (UnityWebRequest www = UnityWebRequest.Post(uploadUrl, formData))
+        {
+            // Set timeout (optional)
+            www.timeout = 30;
+
+            // Send the request
+            yield return www.SendWebRequest();
+
+            // Check for errors
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("File uploaded successfully!");
+                Debug.Log("Response: " + www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError("Upload failed: " + www.error);
+                Debug.LogError("Response Code: " + www.responseCode);
+                Debug.LogError("Response: " + www.downloadHandler.text);
+            }
+        }
+    }
+    public static void UploadAllLeveles()
+    {
+        string[] fileEntries = Directory.GetFiles(Application.persistentDataPath + "/SavedLevels/");
+        List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
+        foreach (string file in fileEntries)
+        {
+
+            // Check if file exists
+            if (!File.Exists(file))
+            {
+                Debug.LogError("File does not exist: " + file);
+                return;
+            }
+
+            // Read file bytes
+            byte[] fileData = File.ReadAllBytes(file);
+            string fileName = Path.GetFileName(file);
+
+            // Create form data
+            formData.Add(new MultipartFormFileSection("file", fileData, fileName, "application/json"));
+        }
+        // Create the request
+        using (UnityWebRequest www = UnityWebRequest.Post(uploadUrl, formData))
+        {
+            // Set timeout (optional)
+            www.timeout = 30;
+            www.SendWebRequest();
+            // Send the request
+            //yield return www.SendWebRequest();
+
+            // Check for errors
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("File uploaded successfully!");
+                Debug.Log("Response: " + www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError("Upload failed: " + www.error);
+                Debug.LogError("Response Code: " + www.responseCode);
+                Debug.LogError("Response: " + www.downloadHandler.text);
+            }
+        }
+
+    }
+    public static void SaveCreatedLevel(string name, CreatorController controller)
+    {
+        var path = Application.persistentDataPath + "/SavedLevels/" + name + ".json";
+        var achievements = new TowerData();
+
+
+        achievements.transforms = controller.transforms;
+        achievements.colors = controller.materials;
+
+        string saveLevels = JsonUtility.ToJson(achievements);
+        Directory.CreateDirectory(Application.persistentDataPath + "/SavedLevels/");
+        File.WriteAllText(path, saveLevels);
+        Debug.Log(path);
+        levelFilePath = path;
+    }
 
     public static void SaveTower()
     {

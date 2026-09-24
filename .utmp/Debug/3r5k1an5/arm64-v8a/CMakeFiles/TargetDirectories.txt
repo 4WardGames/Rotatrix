@@ -1,0 +1,5 @@
+D:/4wardgames/Rotatrix/Rotatrix/.utmp/Debug/3r5k1an5/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/4wardgames/Rotatrix/Rotatrix/.utmp/Debug/3r5k1an5/arm64-v8a/CMakeFiles/rebuild_cache.dir
+D:/4wardgames/Rotatrix/Rotatrix/.utmp/Debug/3r5k1an5/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+D:/4wardgames/Rotatrix/Rotatrix/.utmp/Debug/3r5k1an5/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+D:/4wardgames/Rotatrix/Rotatrix/.utmp/Debug/3r5k1an5/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

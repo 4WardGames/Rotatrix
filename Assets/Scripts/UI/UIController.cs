@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    private Canvas[] UIs = new Canvas[10];
+    private Canvas[] UIs = new Canvas[11];
     private TMP_Text TimeText;
     public GameObject TutorialText;
     public bool[] Stars;
@@ -65,6 +65,7 @@ public class UIController : MonoBehaviour
         UIs[7] = GameObject.Find("ChallengeMenu").GetComponent<Canvas>();
         UIs[8] = GameObject.Find("GameOverMenu").GetComponent<Canvas>();
         UIs[9] = GameObject.Find("QuickGameSubMenu").GetComponent<Canvas>();
+        UIs[10] = GameObject.Find("ColorMenu").GetComponent<Canvas>();
         Stars = new bool[3] { true, true, true };
 
         StarsIMG[0] = GameObject.Find("Star1").GetComponent<Image>();
@@ -139,7 +140,7 @@ public class UIController : MonoBehaviour
 
     public void ChangeMenu(int id)
     {
-        if (id == 3 || id == 8 || id == 0)
+        if (id == 3 || id == 8 || id == 0 || id == 10)
         {
             Time.timeScale = 1.0f;
         }
@@ -170,7 +171,10 @@ public class UIController : MonoBehaviour
                 UIs[i].enabled = false;
             }
         }
-
+        if (id == 10)
+        {
+            UIs[3].enabled = true;
+        }
     }
 
     public void LevelButtons(int u)
