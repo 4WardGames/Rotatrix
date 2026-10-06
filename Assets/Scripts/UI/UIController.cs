@@ -308,20 +308,18 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void LoseStarInfo(string moves, string time)
+    public void LoseStarInfo(float _moves, float _time)
     {
-        Debug.Log(LocalizationSettings.SelectedLocale.name);
-        switch (LocalizationSettings.SelectedLocale.name)
+        MinimumMoves.text = _moves.ToString();
+        string time = "";
+        if (_time < 600)
         {
-            default:
-                MinimumMoves.text = "Solve in " + moves + " moves";
-                MinimumTime.text = "Solve in " + time + " seconds";
-                break;
-            case "Polish (pl)":
-                MinimumMoves.text = "U³ó¿ w " + moves + " ruchach";
-                MinimumTime.text = "U³ó¿ w " + time + " sekund";
-                break;
+            time += "0";
         }
+        time += (int)_time / 60;
+        time += ":" + _time % 60;
+        MinimumTime.text = time.ToString();
+
     }
 
     public void NewGame()

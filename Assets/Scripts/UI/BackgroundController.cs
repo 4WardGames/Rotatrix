@@ -17,10 +17,10 @@ public class BackgroundController : MonoBehaviour
     void Start()
     {
         backScenes = new GameObject[4];
-        backScenes[0] = GameObject.Find("00FlexTheBlock");
-        backScenes[1] = GameObject.Find("01BlockTheBeach"); 
-        backScenes[2] = GameObject.Find("02BlockFromHell"); 
-        backScenes[3] = GameObject.Find("03RoadBlock"); 
+        backScenes[0] = transform.Find("00FlexTheBlock").gameObject;
+        backScenes[1] = transform.Find("01BlockTheBeach").gameObject;
+        backScenes[2] = transform.Find("02BlockFromHell").gameObject; 
+        backScenes[3] = transform.Find("03RoadBlock").gameObject; 
         ChangeBackgroundScene(0);
     }
 

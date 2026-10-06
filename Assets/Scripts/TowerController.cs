@@ -545,7 +545,7 @@ public class TowerController : MonoBehaviour
         minMoves = timesRandomized;
         minGameTime = minMoves * size;
 
-        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
+        _controller.LoseStarInfo(minMoves, minGameTime);
 
         for (int i = 0; i < timesRandomized; i++)
         {
@@ -730,7 +730,7 @@ public class TowerController : MonoBehaviour
 
         minMoves = 11;
         minGameTime = minMoves * 7;
-        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
+        _controller.LoseStarInfo(minMoves, minGameTime);
     }
 
     public bool CheckTutorialMoveBlock(bool rotate, bool backwards)
@@ -855,7 +855,7 @@ public class TowerController : MonoBehaviour
         minMoves = loadedTower.transforms.Count;
         minGameTime = minMoves * 7;
 
-        _controller.LoseStarInfo(minMoves.ToString(), minGameTime.ToString());
+        _controller.LoseStarInfo(minMoves, minGameTime);
     }
 
     public void RestartLevel()

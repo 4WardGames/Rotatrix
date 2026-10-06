@@ -158,6 +158,18 @@ MonoBehaviour:
     m_Localized: '3: RoadBLOK'
     m_Metadata:
       m_Items: []
+  - m_Id: 19645808366596096
+    m_Localized: Level designer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21441201295339520
+    m_Localized: 'Moves limit:
+
+      Time limit:
+
+      Best stars:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
